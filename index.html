@@ -209,7 +209,7 @@
 
         async function publishEntry() {
             const content = document.getElementById('diaryInput').value.trim();
-            const author = document.getElementById('authorName').value || '林间';
+            const author = document.getElementById('authorName').value || '';
             if (!content) return;
             await supabaseClient.from('ForestLog').insert([{ content, author, mood: currentMood, is_capsule: document.getElementById('capsuleCheck').checked }]);
             document.getElementById('diaryInput').value = '';
