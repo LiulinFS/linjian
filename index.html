@@ -51,46 +51,46 @@
         #heart-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
         .heart { position: absolute; filter: drop-shadow(0 0 8px rgba(255,179,71,0.4)); animation: fall linear infinite; }
 
-        header { text-align: center; margin-top: 120px; margin-bottom: 40px; z-index: 1; }
+        header { text-align: center; margin-top: 100px; margin-bottom: 30px; z-index: 1; }
         .forest-text { font-size: 1.6rem; color: var(--forest-dark); font-weight: bold; margin-bottom: 12px; }
         .autumn-text { font-size: 2.3rem; color: var(--autumn-gold); font-weight: bold; }
 
+        /* 输入区 */
         .input-section {
             width: 100%; max-width: 500px; background: var(--card-bg);
-            padding: 25px; border-radius: 20px; margin-bottom: 30px;
+            padding: 20px; border-radius: 18px; margin-bottom: 25px;
             border: 1px solid var(--card-border); z-index: 1; backdrop-filter: blur(10px);
         }
-        textarea { width: 100%; background: transparent; border: none; color: white; font-size: 1.1rem; resize: none; outline: none; height: 70px; }
+        textarea { width: 100%; background: transparent; border: none; color: white; font-size: 1.1rem; resize: none; outline: none; height: 60px; }
         
-        .mood-selector { display: flex; gap: 12px; margin: 12px 0; }
+        .mood-selector { display: flex; gap: 12px; margin: 10px 0; }
         .mood-btn { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 1.5px solid transparent; transition: 0.3s; }
         .mood-btn.active { border-color: white; transform: scale(1.2); box-shadow: 0 0 8px white; }
 
-        .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-        .author-input { background: rgba(255,255,255,0.08); border: 1px solid #444; color: #eee; border-radius: 12px; padding: 6px 12px; width: 80px; font-size: 0.9rem; }
+        .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; flex-wrap: wrap; gap: 10px; }
+        .author-input { background: rgba(255,255,255,0.08); border: 1px solid #444; color: #eee; border-radius: 10px; padding: 6px 10px; width: 80px; font-size: 0.9rem; }
+        
+        #capsuleTime { background: rgba(0,0,0,0.3); border: 1px solid #555; color: #aaa; border-radius: 8px; padding: 4px; font-size: 0.8rem; display: none; }
         button#publishBtn { background: var(--autumn-gold); border: none; padding: 10px 22px; border-radius: 25px; cursor: pointer; font-weight: bold; color: #1c2b23; }
 
+        /* 列表展示：收紧间距 */
         #diary-list { width: 100%; max-width: 500px; z-index: 1; padding-bottom: 50px; }
         .diary-item {
-            background: var(--card-bg); padding: 20px; border-radius: 18px;
-            margin-bottom: 20px; border: 1px solid var(--card-border);
-            border-left: 5px solid var(--autumn-gold); backdrop-filter: blur(5px);
+            background: var(--card-bg); 
+            padding: 12px 15px; /* 内部收紧 */
+            border-radius: 15px; 
+            margin-bottom: 12px; /* 外部收紧 */
+            border: 1px solid var(--card-border);
+            border-left: 5px solid var(--autumn-gold); 
+            backdrop-filter: blur(5px);
             position: relative;
         }
 
         .actions { display: flex; gap: 12px; align-items: center; }
         .action-btn { background: none; border: none; color: var(--forest-text); cursor: pointer; opacity: 0.5; font-size: 1rem; }
 
-        @keyframes fall {
-            0% { transform: translateY(-10vh) rotate(0deg) scale(0.8); opacity: 0; }
-            20% { opacity: 0.8; }
-            100% { transform: translateY(110vh) rotate(360deg) scale(1.2); opacity: 0; }
-        }
-
         @media (max-width: 600px) {
-            header { margin-top: 120px; } 
-            .forest-text { font-size: 1.25rem; }
-            .autumn-text { font-size: 1.6rem; }
+            header { margin-top: 100px; } 
             .input-section, #diary-list { width: 92%; padding: 15px; }
         }
     </style>
@@ -123,9 +123,12 @@
             <div class="mood-btn" onclick="setMood('blue', this)" style="background: var(--tired-blue);"></div>
         </div>
         <div class="controls">
-            <input type="text" id="authorName" class="author-input" value="">
-            <div style="display:flex; align-items:center; gap:10px;">
-                <label style="font-size:0.8rem; color:#8da399; cursor:pointer;"><input type="checkbox" id="capsuleCheck"> 时光胶囊</label>
+            <input type="text" id="authorName" class="author-input" value="" placeholder="名字">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <label style="font-size:0.8rem; color:#8da399; cursor:pointer;">
+                    <input type="checkbox" id="capsuleCheck" onchange="toggleTimeInput(this)"> 胶囊
+                </label>
+                <input type="datetime-local" id="capsuleTime">
                 <button id="publishBtn" onclick="publishEntry()">发布日志</button>
             </div>
         </div>
@@ -143,6 +146,10 @@
         let editingId = null;
 
         fetchDiaries();
+
+        function toggleTimeInput(cb) {
+            document.getElementById('capsuleTime').style.display = cb.checked ? 'block' : 'none';
+        }
 
         function validatePass(val) {
             const btn = document.getElementById('enterBtn');
@@ -175,35 +182,39 @@
 
         async function fetchDiaries() {
             const { data } = await supabaseClient.from('ForestLog').select('*').order('created_at', { ascending: false });
-            if (data) {
-                renderDiaries(data);
-            }
+            if (data) { renderDiaries(data); }
         }
 
         function renderDiaries(data) {
             const list = document.getElementById('diary-list');
             if (!list) return;
             const now = new Date();
-            
             list.innerHTML = data.map(item => {
-                const postTime = new Date(item.created_at);
-                const isLocked = item.is_capsule && (now - postTime) < 86400000;
-                const hoursLeft = Math.ceil(24 - (now - postTime) / 3600000);
+                const unlockAt = item.unlock_at ? new Date(item.unlock_at) : new Date(new Date(item.created_at).getTime() + 86400000);
+                const isLocked = item.is_capsule && now < unlockAt;
                 
+                let timeTip = '';
+                if (isLocked) {
+                    const diff = unlockAt - now;
+                    const h = Math.floor(diff / 3600000);
+                    const m = Math.floor((diff % 3600000) / 60000);
+                    timeTip = ` (约 ${h}时${m}分 后开启)`;
+                }
+
                 return `
                 <div class="diary-item" style="border-left: 5px solid ${moodColors[item.mood] || moodColors.gold}">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
                         <div style="font-size:0.8rem; color:#8da399">
-                            <span style="color:#ffb347; font-weight:bold; margin-right:8px;">${item.author}</span>
-                            ${postTime.toLocaleString()}
+                            <span style="color:#ffb347; font-weight:bold; margin-right:8px;">${item.author || '匿名'}</span>
+                            ${new Date(item.created_at).toLocaleString()}
                         </div>
                         <div class="actions">
                             <button class="action-btn" onclick="startEdit('${item.id}', \`${item.content.replace(/'/g, "\\'")}\`, '${item.author}')">✎</button>
                             <button class="action-btn" onclick="deleteEntry('${item.id}')">✕</button>
                         </div>
                     </div>
-                    <div style="line-height:1.8; white-space:pre-wrap; ${isLocked ? 'color:#555; font-style:italic;' : ''}">
-                        ${isLocked ? `⏳ 时光胶囊：正在传送中... (约 ${hoursLeft} 小时后开启)` : item.content}
+                    <div style="line-height:1.6; white-space:pre-wrap; ${isLocked ? 'color:#555; font-style:italic;' : ''}">
+                        ${isLocked ? `⏳ 时光胶囊：传送中...${timeTip}` : item.content}
                     </div>
                 </div>
             `}).join('');
@@ -211,17 +222,28 @@
 
         async function publishEntry() {
             const content = document.getElementById('diaryInput').value.trim();
-            const author = document.getElementById('authorName').value || '林间';
+            const author = document.getElementById('authorName').value || '匿名';
+            const isCapsule = document.getElementById('capsuleCheck').checked;
+            const unlockAt = document.getElementById('capsuleTime').value;
+
             if (!content) return;
+            
+            const payload = { content, author, mood: currentMood, is_capsule: isCapsule };
+            if (isCapsule && unlockAt) {
+                payload.unlock_at = new Date(unlockAt).toISOString();
+            }
+
             if (editingId) {
-                await supabaseClient.from('ForestLog').update({ content, author, mood: currentMood }).eq('id', editingId);
+                await supabaseClient.from('ForestLog').update(payload).eq('id', editingId);
                 editingId = null;
                 document.getElementById('publishBtn').innerText = '发布日志';
             } else {
-                await supabaseClient.from('ForestLog').insert([{ content, author, mood: currentMood, is_capsule: document.getElementById('capsuleCheck').checked }]);
+                await supabaseClient.from('ForestLog').insert([payload]);
             }
+            
             document.getElementById('diaryInput').value = '';
             document.getElementById('capsuleCheck').checked = false;
+            document.getElementById('capsuleTime').style.display = 'none';
             fetchDiaries();
         }
 
