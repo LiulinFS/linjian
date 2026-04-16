@@ -8,7 +8,7 @@
     <style>
         :root {
             --forest-bg: #1c2b23;
-            --forest-dark: #8ED973; /* 你的专属嫩绿色 */
+            --forest-dark: #8ED973; 
             --forest-text: #8da399;
             --autumn-gold: #ffb347;
             --love-pink: #ff85a1;
@@ -24,7 +24,7 @@
             min-height: 100vh; padding: 40px 20px; overflow-x: hidden;
         }
 
-        /* 音乐开关样式 */
+        /* 音乐旋转按钮 */
         #musicToggle {
             position: fixed; top: 20px; right: 20px; z-index: 1100;
             cursor: pointer; font-size: 1.8rem; opacity: 0.7; transition: 0.3s;
@@ -33,7 +33,6 @@
         #musicToggle.playing { animation: rotate 4s linear infinite; opacity: 1; }
         @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        /* 暗号与背景 */
         #passcodeOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--forest-bg); z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.5s; }
         #heart-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
         .heart { position: absolute; filter: drop-shadow(0 0 8px rgba(255,179,71,0.4)); animation: fall linear infinite; }
@@ -42,7 +41,6 @@
         .forest-text { font-size: 1.8rem; color: var(--forest-dark); font-weight: bold; margin-bottom: 10px; }
         .autumn-text { font-size: 2.3rem; color: var(--autumn-gold); font-weight: bold; }
 
-        /* 输入区 */
         .input-section {
             width: 100%; max-width: 500px; background: var(--card-bg);
             padding: 25px; border-radius: 20px; margin-bottom: 30px;
@@ -64,7 +62,6 @@
             transition: 0.3s; box-shadow: 0 4px 15px rgba(255,179,71,0.3);
         }
 
-        /* 列表展示 */
         #diary-list { width: 100%; max-width: 500px; z-index: 1; }
         .diary-item {
             background: var(--card-bg); padding: 20px; border-radius: 18px;
@@ -78,7 +75,6 @@
         .action-btn { background: none; border: none; cursor: pointer; color: var(--forest-text); opacity: 0.6; }
         .action-btn:hover { color: var(--autumn-gold); opacity: 1; }
 
-        /* 弹窗样式 */
         #customModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 2000; justify-content: center; align-items: center; }
         .modal-content { background: var(--forest-bg); border: 1px solid var(--autumn-gold); padding: 30px; border-radius: 20px; text-align: center; width: 80%; max-width: 320px; }
         .modal-btns { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
@@ -89,19 +85,17 @@
             100% { transform: translateY(110vh) rotate(360deg) scale(1.2); opacity: 0; }
         }
 
-        /* 移动端适配 */
         @media (max-width: 600px) {
             .forest-text { font-size: 1.2rem; }
             .autumn-text { font-size: 1.6rem; }
             .input-section, #diary-list { width: 92%; padding: 15px; }
-            #musicToggle { top: 15px; right: 15px; font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
 
     <div id="musicToggle" onclick="toggleMusic()">🎵</div>
-    <audio id="bgMusic" loop src="./忧 - Oh Love（哦哦爱）_H.mp3"></audio>
+    <audio id="bgMusic" loop src="./忧 - Oh Love（哦哦爱） _H.mp3"></audio>
 
     <div id="passcodeOverlay">
         <input type="password" id="passInput" placeholder="输入暗号..." style="background:transparent; border:none; border-bottom:1px solid #ffb347; color:white; text-align:center; outline:none; font-size:1.2rem;" oninput="checkPass(this.value)">
@@ -115,14 +109,12 @@
     </header>
 
     <div class="input-section">
-        <textarea id="diaryInput" placeholder="在这里留下此时此刻..."></textarea>
-        
+        <textarea id="diaryInput" placeholder="存入此时此刻..."></textarea>
         <div class="mood-selector">
             <div class="mood-btn active" onclick="setMood('gold', this)" style="background: var(--autumn-gold);"></div>
             <div class="mood-btn" onclick="setMood('pink', this)" style="background: var(--love-pink);"></div>
             <div class="mood-btn" onclick="setMood('blue', this)" style="background: var(--tired-blue);"></div>
         </div>
-
         <div class="controls">
             <input type="text" id="authorName" class="author-input" value="林间">
             <div style="display:flex; align-items:center; gap:10px;">
@@ -153,14 +145,14 @@
         const moodColors = { gold: '#ffb347', pink: '#ff85a1', blue: '#70a1ff' };
         let editingId = null;
 
-        // 音乐控制逻辑
         function toggleMusic() {
             const music = document.getElementById('bgMusic');
             const btn = document.getElementById('musicToggle');
             if (music.paused) {
-                music.play();
-                btn.classList.add('playing');
-                btn.innerText = '💿';
+                music.play().then(() => {
+                    btn.classList.add('playing');
+                    btn.innerText = '💿';
+                }).catch(() => { alert("点一下音符就能听见森林的声音啦~"); });
             } else {
                 music.pause();
                 btn.classList.remove('playing');
@@ -200,18 +192,14 @@
             const content = document.getElementById('diaryInput').value.trim();
             const author = document.getElementById('authorName').value || '林间';
             if (!content) return;
-            
             if (editingId) {
                 await supabaseClient.from('ForestLog').update({ content, author, mood: currentMood }).eq('id', editingId);
                 editingId = null;
                 document.getElementById('publishBtn').innerText = '发布日志';
             } else {
-                await supabaseClient.from('ForestLog').insert([{ 
-                    content, author, mood: currentMood, is_capsule: document.getElementById('capsuleCheck').checked 
-                }]);
+                await supabaseClient.from('ForestLog').insert([{ content, author, mood: currentMood, is_capsule: document.getElementById('capsuleCheck').checked }]);
             }
             document.getElementById('diaryInput').value = '';
-            document.getElementById('capsuleCheck').checked = false;
         }
 
         function setMood(mood, btn) {
