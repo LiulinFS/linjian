@@ -8,10 +8,11 @@
     <style>
         :root {
             --forest-bg: #1c2b23;
-            --forest-dark: #8ED973; /* 要求的墨绿色 */
+            --forest-dark: #8ED973;
             --forest-text: #8da399;
-            --autumn-gold: #ffb347; /* 饱满金黄色 */
-            --autumn-glow: rgba(255, 179, 71, 0.4);
+            --autumn-gold: #ffb347;
+            --love-pink: #ff85a1;
+            --tired-blue: #70a1ff;
             --card-bg: rgba(255, 255, 255, 0.05);
             --card-border: rgba(255, 255, 255, 0.1);
         }
@@ -23,170 +24,210 @@
             min-height: 100vh; padding: 40px 20px; overflow-x: hidden;
         }
 
+        /* 暗号遮罩 */
+        #passcodeOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--forest-bg); z-index: 1000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: 0.5s;
+        }
+
+        /* 纪念日计时 */
+        #anniversary { font-size: 0.9rem; color: var(--autumn-gold); margin-bottom: 10px; opacity: 0.8; }
+
+        /* 音乐控制 */
+        #musicToggle {
+            position: fixed; top: 20px; right: 20px; z-index: 100;
+            cursor: pointer; font-size: 1.5rem; opacity: 0.6; transition: 0.3s;
+        }
+        #musicToggle.playing { animation: rotate 3s linear infinite; opacity: 1; }
+
         #heart-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-        .heart { position: absolute; fill: var(--autumn-gold); filter: drop-shadow(0 0 8px var(--autumn-glow)); animation: fall linear infinite; }
+        .heart { position: absolute; filter: drop-shadow(0 0 5px rgba(0,0,0,0.3)); animation: fall linear infinite; }
 
-        header { text-align: center; margin-bottom: 6vh; margin-top: 5vh; z-index: 1; }
-        
-        /* 墨绿色第一行字：字号 1.8rem */
-        .forest-text { 
-            font-size: 1.8rem; 
-            color: var(--forest-dark); 
-            font-weight: bold;
-            letter-spacing: 2px; margin-bottom: 15px;
-            text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
-        }
-
-        /* 金色第二行字：字号 2.3rem */
-        .autumn-text { 
-            font-size: 2.3rem; color: var(--autumn-gold); font-weight: bold; 
-            letter-spacing: 4px; text-shadow: 0 0 15px var(--autumn-glow);
-        }
+        header { text-align: center; margin-bottom: 5vh; z-index: 1; }
+        .forest-text { font-size: 1.6rem; color: var(--forest-dark); font-weight: bold; margin-bottom: 10px; }
+        .autumn-text { font-size: 2.3rem; color: var(--autumn-gold); font-weight: bold; text-shadow: 0 0 15px rgba(255,179,71,0.4); }
 
         .input-section {
             width: 100%; max-width: 500px; background: var(--card-bg);
-            padding: 25px; border-radius: 20px; margin-bottom: 40px;
+            padding: 25px; border-radius: 20px; margin-bottom: 30px;
             border: 1px solid var(--card-border); z-index: 1;
-            backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
         }
 
-        textarea { width: 100%; background: transparent; border: none; color: white; font-size: 1.1rem; resize: none; outline: none; height: 80px; }
-        .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-        .author-input { background: rgba(255,255,255,0.05); border: 1px solid #333; color: #ccc; border-radius: 12px; padding: 6px 15px; width: 90px; }
+        textarea { width: 100%; background: transparent; border: none; color: white; font-size: 1.1rem; outline: none; height: 70px; }
         
-        button#publishBtn { 
-            background: var(--autumn-gold); border: none; padding: 10px 25px; 
-            border-radius: 25px; cursor: pointer; font-weight: bold; color: #1c2b23; 
-            transition: 0.2s; box-shadow: 0 4px 10px var(--autumn-glow);
+        /* 心情选择器 */
+        .mood-selector { display: flex; gap: 10px; margin: 15px 0; }
+        .mood-btn { 
+            width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent;
+            transition: 0.3s; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;
         }
-        button#publishBtn:active { transform: scale(0.95); }
+        .mood-btn.active { border-color: white; transform: scale(1.2); }
+
+        .controls { display: flex; justify-content: space-between; align-items: center; }
+        .capsule-label { font-size: 0.8rem; color: var(--forest-text); cursor: pointer; }
 
         #diary-list { width: 100%; max-width: 500px; z-index: 1; }
         .diary-item {
             background: var(--card-bg); padding: 20px; border-radius: 18px; margin-bottom: 20px;
-            border: 1px solid var(--card-border); border-left: 5px solid var(--autumn-gold);
-            backdrop-filter: blur(5px); position: relative;
-            /* 删掉了滑入动画，解决全局闪烁问题 */
+            border: 1px solid var(--card-border); backdrop-filter: blur(5px);
+        }
+        .diary-content { line-height: 1.8; margin-top: 10px; }
+
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
         }
 
-        .diary-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
-        .diary-time { font-size: 0.8rem; color: var(--forest-text); }
-        .author-tag { color: var(--autumn-gold); font-weight: bold; margin-right: 10px; }
-        .diary-content { line-height: 1.8; font-size: 1.05rem; white-space: pre-wrap; }
-
-        .actions { display: flex; gap: 15px; }
-        .action-btn { background: none; border: none; cursor: pointer; color: var(--forest-text); opacity: 0.6; }
-        .action-btn:hover { color: var(--autumn-gold); opacity: 1; }
-
-        /* 自定义确认框 */
-        #customModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 100; justify-content: center; align-items: center; }
-        .modal-content { background: var(--forest-bg); border: 1px solid var(--autumn-gold); padding: 30px; border-radius: 20px; text-align: center; width: 80%; max-width: 320px; }
-        .modal-btns { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
-        .confirm-btn { background: var(--autumn-gold); color: #1c2b23; padding: 8px 25px; border-radius: 20px; border:none; font-weight:bold; cursor:pointer;}
-        .cancel-btn { background: transparent; color: white; border: 1px solid #555; padding: 8px 25px; border-radius: 20px; cursor:pointer;}
-
-        @keyframes fall {
-            0% { transform: translateY(-10vh) rotate(0deg) scale(0.8); opacity: 0; }
-            20% { opacity: 0.8; }
-            100% { transform: translateY(110vh) rotate(360deg) scale(1.2); opacity: 0; }
+        input#passInput {
+            background: transparent; border: none; border-bottom: 1px solid var(--autumn-gold);
+            color: white; text-align: center; font-size: 1.2rem; outline: none; padding: 10px;
         }
     </style>
 </head>
 <body>
+
+    <div id="passcodeOverlay">
+        <p style="color: var(--forest-text); margin-bottom: 20px;">输入暗号进入林间</p >
+        <input type="password" id="passInput" placeholder="请输入..." oninput="checkPass(this.value)">
+    </div>
+
+    <div id="musicToggle" onclick="toggleMusic()">🎵</div>
+    <audio id="bgMusic" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+
     <div id="heart-container"></div>
+
     <header>
+        <div id="anniversary"></div>
         <div class="forest-text">虽然森林很大有时候容易迷路</div>
         <div class="autumn-text">但秋天总会如约而至</div>
     </header>
+
     <div class="input-section">
-        <textarea id="diaryInput" placeholder="写下林间的心语..."></textarea>
+        <textarea id="diaryInput" placeholder="在这里留下此时此刻..."></textarea>
+        
+        <div class="mood-selector">
+            <div class="mood-btn active" onclick="setMood('gold', this)" style="background: var(--autumn-gold);">☀</div>
+            <div class="mood-btn" onclick="setMood('pink', this)" style="background: var(--love-pink);">❤</div>
+            <div class="mood-btn" onclick="setMood('blue', this)" style="background: var(--tired-blue);">☁</div>
+        </div>
+
         <div class="controls">
-            <input type="text" id="authorName" class="author-input" value="林间">
-            <button id="publishBtn" onclick="publishEntry()">发布日志</button>
+            <label class="capsule-label"><input type="checkbox" id="capsuleCheck"> 时光胶囊 (24h后可见)</label>
+            <button id="publishBtn" onclick="publishEntry()" style="background: var(--autumn-gold); border:none; padding:8px 20px; border-radius:20px; font-weight:bold; cursor:pointer;">存入</button>
         </div>
     </div>
-    <div id="diary-list"></div>
 
-    <div id="customModal">
-        <div class="modal-content"><p>要把这段记忆抹去吗？</p ><div class="modal-btns"><button class="cancel-btn" onclick="closeModal()">取消</button><button class="confirm-btn" id="modalConfirmBtn">确定</button></div></div>
-    </div>
+    <div id="diary-list"></div>
 
     <script>
         const SUPABASE_URL = 'https://hhsonthokjwhpcgbpnru.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhoc29udGhva2p3aHBjZ2JwbnJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTUwNjQsImV4cCI6MjA5MTgzMTA2NH0.bf96o-eDXFSrOeHqTmnNSQZqDIDG7cjq1zciX7PNDQc';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        let editingId = null;
 
-        // 获取并渲染数据
+        let currentMood = 'gold';
+        const moodColors = { gold: '#ffb347', pink: '#ff85a1', blue: '#70a1ff' };
+
+        // 1. 暗号逻辑
+        function checkPass(val) {
+            if (val === '邱天' || val === '1314') { // 这里可以改你的暗号
+                document.getElementById('passcodeOverlay').style.opacity = '0';
+                setTimeout(() => document.getElementById('passcodeOverlay').style.display = 'none', 500);
+                startSite();
+            }
+        }
+
+        // 2. 纪念日计算
+        function updateAnniversary() {
+            const startDate = new Date('2025-12-04'); // 这里改写你们相识的日期！
+            const now = new Date();
+            const diff = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
+            document.getElementById('anniversary').innerText = `林间与邱天相遇的第 ${diff} 天`;
+        }
+
+        // 3. 音乐控制
+        function toggleMusic() {
+            const music = document.getElementById('bgMusic');
+            const btn = document.getElementById('musicToggle');
+            if (music.paused) {
+                music.play();
+                btn.classList.add('playing');
+            } else {
+                music.pause();
+                btn.classList.remove('playing');
+            }
+        }
+
+        function setMood(mood, btn) {
+            currentMood = mood;
+            document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
         async function fetchDiaries() {
             const { data } = await supabaseClient.from('ForestLog').select('*').order('created_at', { ascending: false });
             if (data) {
-                document.getElementById('diary-list').innerHTML = data.map(item => `
-                    <div class="diary-item">
-                        <div class="diary-header">
-                            <div class="diary-time"><span class="author-tag">${item.author}</span>${new Date(item.created_at).toLocaleString()}</div>
-                            <div class="actions">
-                                <button class="action-btn" onclick="startEdit('${item.id}', \`${item.content}\`)">✎</button>
-                                <button class="action-btn" onclick="openDeleteModal('${item.id}')">✕</button>
-                            </div>
-                        </div>
-                        <div class="diary-content">${item.content}</div>
-                    </div>
-                `).join('');
+                const now = new Date();
+                const filtered = data.filter(item => {
+                    if (!item.is_capsule) return true;
+                    const postTime = new Date(item.created_at);
+                    return (now - postTime) > 24 * 60 * 60 * 1000; // 24小时判断
+                });
+                render(filtered);
             }
         }
 
-        // 发布逻辑：删掉了 fetchDiaries()，靠实时监听自动刷新
+        function render(data) {
+            document.getElementById('diary-list').innerHTML = data.map(item => `
+                <div class="diary-item" style="border-left: 5px solid ${moodColors[item.mood] || moodColors.gold}">
+                    <div style="font-size:0.8rem; color:var(--forest-text)">
+                        ${item.is_capsule ? '⏳ 时光胶囊 · ' : ''}${new Date(item.created_at).toLocaleString()}
+                    </div>
+                    <div class="diary-content">${item.content}</div>
+                </div>
+            `).join('');
+        }
+
         async function publishEntry() {
             const content = document.getElementById('diaryInput').value.trim();
-            const author = document.getElementById('authorName').value;
+            const is_capsule = document.getElementById('capsuleCheck').checked;
             if (!content) return;
-            if (editingId) {
-                await supabaseClient.from('ForestLog').update({ content, author }).eq('id', editingId);
-                editingId = null;
-                document.getElementById('publishBtn').innerText = '发布日志';
-            } else {
-                await supabaseClient.from('ForestLog').insert([{ content, author }]);
-            }
+            
+            await supabaseClient.from('ForestLog').insert([{ 
+                content, 
+                author: '林间', 
+                mood: currentMood,
+                is_capsule: is_capsule
+            }]);
+            
             document.getElementById('diaryInput').value = '';
+            document.getElementById('capsuleCheck').checked = false;
         }
 
-        function openDeleteModal(id) {
-            document.getElementById('customModal').style.display = 'flex';
-            document.getElementById('modalConfirmBtn').onclick = async () => {
-                await supabaseClient.from('ForestLog').delete().eq('id', id);
-                closeModal();
-            };
-        }
-        function closeModal() { document.getElementById('customModal').style.display = 'none'; }
-        function startEdit(id, content) {
-            editingId = id;
-            document.getElementById('diaryInput').value = content;
-            document.getElementById('publishBtn').innerText = '保存修改';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // 黄金爱心
         function createHeart() {
             const heart = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             heart.setAttribute("viewBox", "0 0 24 24");
             heart.setAttribute("class", "heart");
-            const size = Math.random() * 20 + 30;
+            const size = Math.random() * 20 + 25;
             heart.style.width = size + "px";
             heart.style.left = Math.random() * 100 + "vw";
             heart.style.animationDuration = (Math.random() * 3 + 5) + "s";
-            heart.style.opacity = Math.random() * 0.5 + 0.3;
+            heart.style.fill = moodColors[currentMood];
             heart.innerHTML = `<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>`;
             document.getElementById('heart-container').appendChild(heart);
-            setTimeout(() => heart.remove(),15000);
+            setTimeout(() => heart.remove(), 15000);
         }
-        setInterval(createHeart, 300);
 
-        // 实时监听：这是唯一的刷新源，保证不闪烁
-        supabaseClient.channel('any').on('postgres_changes', { event: '*', schema: 'public', table: 'ForestLog' }, fetchDiaries).subscribe();
-        
-        // 首次加载
-        fetchDiaries();
+        function startSite() {
+            updateAnniversary();
+            setInterval(createHeart, 300);
+            fetchDiaries();
+            supabaseClient.channel('any').on('postgres_changes', { event: '*', schema: 'public', table: 'ForestLog' }, fetchDiaries).subscribe();
+        }
     </script>
 </body>
 </html>
