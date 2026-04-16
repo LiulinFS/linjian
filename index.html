@@ -78,10 +78,8 @@
             position: relative;
         }
 
-        /* 按钮样式微调 */
         .actions { display: flex; gap: 12px; align-items: center; }
-        .action-btn { background: none; border: none; color: var(--forest-text); cursor: pointer; opacity: 0.5; transition: 0.3s; padding: 5px; font-size: 1rem; }
-        .action-btn:hover { opacity: 1; color: var(--autumn-gold); }
+        .action-btn { background: none; border: none; color: var(--forest-text); cursor: pointer; opacity: 0.5; font-size: 1rem; }
 
         @keyframes fall {
             0% { transform: translateY(-10vh) rotate(0deg) scale(0.8); opacity: 0; }
@@ -144,7 +142,6 @@
         const moodColors = { gold: '#ffb347', pink: '#ff85a1', blue: '#70a1ff' };
         let editingId = null;
 
-        // 抢跑预加载
         fetchDiaries();
 
         function validatePass(val) {
@@ -179,27 +176,37 @@
         async function fetchDiaries() {
             const { data } = await supabaseClient.from('ForestLog').select('*').order('created_at', { ascending: false });
             if (data) {
-                const now = new Date();
-                const filtered = data.filter(item => !item.is_capsule || (now - new Date(item.created_at)) > 86400000);
-                renderDiaries(filtered);
+                renderDiaries(data);
             }
         }
 
         function renderDiaries(data) {
             const list = document.getElementById('diary-list');
             if (!list) return;
-            list.innerHTML = data.map(item => `
+            const now = new Date();
+            
+            list.innerHTML = data.map(item => {
+                const postTime = new Date(item.created_at);
+                const isLocked = item.is_capsule && (now - postTime) < 86400000;
+                const hoursLeft = Math.ceil(24 - (now - postTime) / 3600000);
+                
+                return `
                 <div class="diary-item" style="border-left: 5px solid ${moodColors[item.mood] || moodColors.gold}">
                     <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                        <div style="font-size:0.8rem; color:#8da399"><span style="color:#ffb347; font-weight:bold; margin-right:8px;">${item.author}</span>${new Date(item.created_at).toLocaleString()}</div>
+                        <div style="font-size:0.8rem; color:#8da399">
+                            <span style="color:#ffb347; font-weight:bold; margin-right:8px;">${item.author}</span>
+                            ${postTime.toLocaleString()}
+                        </div>
                         <div class="actions">
                             <button class="action-btn" onclick="startEdit('${item.id}', \`${item.content.replace(/'/g, "\\'")}\`, '${item.author}')">✎</button>
                             <button class="action-btn" onclick="deleteEntry('${item.id}')">✕</button>
                         </div>
                     </div>
-                    <div style="line-height:1.8; white-space:pre-wrap;">${item.content}</div>
+                    <div style="line-height:1.8; white-space:pre-wrap; ${isLocked ? 'color:#555; font-style:italic;' : ''}">
+                        ${isLocked ? `⏳ 时光胶囊：正在传送中... (约 ${hoursLeft} 小时后开启)` : item.content}
+                    </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         async function publishEntry() {
@@ -214,6 +221,7 @@
                 await supabaseClient.from('ForestLog').insert([{ content, author, mood: currentMood, is_capsule: document.getElementById('capsuleCheck').checked }]);
             }
             document.getElementById('diaryInput').value = '';
+            document.getElementById('capsuleCheck').checked = false;
             fetchDiaries();
         }
 
