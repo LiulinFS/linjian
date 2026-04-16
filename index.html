@@ -21,19 +21,19 @@
             margin: 0; background-color: var(--forest-bg); color: white;
             font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
             display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; padding: 40px 20px; overflow-x: hidden;
+            min-height: 100vh; padding: 0 20px; overflow-x: hidden;
         }
 
-        /* 音乐 🎵 */
+        /* 🎵 音乐按钮 */
         #musicToggle {
             position: fixed; top: 20px; right: 20px; z-index: 1100;
             cursor: pointer; font-size: 1.6rem; opacity: 0.8; transition: 0.3s;
             filter: drop-shadow(0 0 5px var(--autumn-gold));
         }
-        #musicToggle.playing { animation: pulse 2s infinite; opacity: 1; }
+        #musicToggle.playing { animation: pulse 2s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
-        /* 暗号遮罩优化 */
+        /* 暗号遮罩 */
         #passcodeOverlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: var(--forest-bg); z-index: 2000; 
@@ -42,38 +42,39 @@
         }
         
         #enterBtn {
-            margin-top: 25px; padding: 8px 30px; 
-            background: transparent; border: 1px solid var(--autumn-gold); 
-            color: var(--autumn-gold); border-radius: 20px; 
-            cursor: pointer; font-size: 0.9rem; transition: 0.3s;
-            opacity: 0; transform: translateY(10px); pointer-events: none;
+            margin-top: 25px; padding: 10px 40px; 
+            background: var(--autumn-gold); border: none; color: #1c2b23; 
+            border-radius: 25px; cursor: pointer; font-size: 1rem; font-weight: bold;
+            box-shadow: 0 4px 15px rgba(255,179,71,0.3);
+            opacity: 0; transform: translateY(10px); pointer-events: none; transition: 0.3s;
         }
         #enterBtn.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
         #heart-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
         .heart { position: absolute; filter: drop-shadow(0 0 8px rgba(255,179,71,0.4)); animation: fall linear infinite; }
 
-        header { text-align: center; margin-bottom: 5vh; z-index: 1; }
-        .forest-text { font-size: 1.8rem; color: var(--forest-dark); font-weight: bold; margin-bottom: 10px; }
-        .autumn-text { font-size: 2.3rem; color: var(--autumn-gold); font-weight: bold; }
+        /* 标题区：增加顶部边距，解决“字在上面”的问题 */
+        header { text-align: center; margin-top: 80px; margin-bottom: 40px; z-index: 1; }
+        .forest-text { font-size: 1.6rem; color: var(--forest-dark); font-weight: bold; margin-bottom: 12px; }
+        .autumn-text { font-size: 2.1rem; color: var(--autumn-gold); font-weight: bold; }
 
         .input-section {
             width: 100%; max-width: 500px; background: var(--card-bg);
             padding: 25px; border-radius: 20px; margin-bottom: 30px;
-            border: 1px solid var(--card-border); z-index: 1;
-            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border); z-index: 1; backdrop-filter: blur(10px);
         }
         textarea { width: 100%; background: transparent; border: none; color: white; font-size: 1.1rem; resize: none; outline: none; height: 70px; }
         
+        /* 精致小圆点 */
         .mood-selector { display: flex; gap: 12px; margin: 12px 0; }
         .mood-btn { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 1.5px solid transparent; transition: 0.3s; }
         .mood-btn.active { border-color: white; transform: scale(1.2); box-shadow: 0 0 8px white; }
 
         .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
         .author-input { background: rgba(255,255,255,0.08); border: 1px solid #444; color: #eee; border-radius: 12px; padding: 6px 12px; width: 80px; font-size: 0.9rem; }
-        button#publishBtn { background: var(--autumn-gold); border: none; padding: 10px 22px; border-radius: 25px; cursor: pointer; font-weight: bold; color: #1c2b23; transition: 0.3s; }
+        button#publishBtn { background: var(--autumn-gold); border: none; padding: 10px 22px; border-radius: 25px; cursor: pointer; font-weight: bold; color: #1c2b23; }
 
-        #diary-list { width: 100%; max-width: 500px; z-index: 1; }
+        #diary-list { width: 100%; max-width: 500px; z-index: 1; padding-bottom: 50px; }
         .diary-item {
             background: var(--card-bg); padding: 20px; border-radius: 18px;
             margin-bottom: 20px; border: 1px solid var(--card-border);
@@ -87,7 +88,9 @@
             100% { transform: translateY(110vh) rotate(360deg) scale(1.2); opacity: 0; }
         }
 
+        /* 📱 手机端专用适配 */
         @media (max-width: 600px) {
+            header { margin-top: 100px; } /* 手机端再往下挪一点 */
             .forest-text { font-size: 1.2rem; }
             .autumn-text { font-size: 1.6rem; }
             .input-section, #diary-list { width: 92%; padding: 15px; }
@@ -97,7 +100,7 @@
 <body>
 
     <div id="musicToggle" onclick="toggleMusic()">🎵</div>
-    <audio id="bgMusic" loop preload="auto">
+    <audio id="bgMusic" loop preload="auto" muted>
         <source src="./Love.mp3" type="audio/mpeg">
     </audio>
 
@@ -140,7 +143,12 @@
         let currentMood = 'gold';
         const moodColors = { gold: '#ffb347', pink: '#ff85a1', blue: '#70a1ff' };
 
-        // 1. 验证暗号：只负责控制按钮显示
+        // 预载尝试
+        window.onload = () => {
+            const music = document.getElementById('bgMusic');
+            music.play().catch(() => console.log("等待手势"));
+        };
+
         function validatePass(val) {
             const btn = document.getElementById('enterBtn');
             if (val === '邱天' || val === '1314') {
@@ -150,18 +158,18 @@
             }
         }
 
-        // 2. 核心：通过明确的“点击”事件启动音乐并进站
+        // 开启森林 + 强制开嗓
         function grantAccess() {
             const music = document.getElementById('bgMusic');
             const toggle = document.getElementById('musicToggle');
             const overlay = document.getElementById('passcodeOverlay');
 
-            // 浏览器会100%允许这个点击触发的播放
+            music.muted = false; // 关键：解除静音
+            music.volume = 1.0;
             music.play().then(() => {
                 toggle.classList.add('playing');
-            }).catch(e => console.log("播放尝试:", e));
+            }).catch(e => console.error("播放受阻", e));
 
-            // 开启进场动画
             overlay.style.opacity = '0';
             overlay.style.transform = 'scale(1.1)';
             setTimeout(() => {
@@ -173,6 +181,7 @@
         function toggleMusic() {
             const music = document.getElementById('bgMusic');
             const btn = document.getElementById('musicToggle');
+            music.muted = false;
             if (music.paused) {
                 music.play().then(() => btn.classList.add('playing'));
             } else {
@@ -201,9 +210,8 @@
         async function publishEntry() {
             const content = document.getElementById('diaryInput').value.trim();
             const author = document.getElementById('authorName').value || '林间';
-            const isCapsule = document.getElementById('capsuleCheck').checked;
             if (!content) return;
-            await supabaseClient.from('ForestLog').insert([{ content, author, mood: currentMood, is_capsule: isCapsule }]);
+            await supabaseClient.from('ForestLog').insert([{ content, author, mood: currentMood, is_capsule: document.getElementById('capsuleCheck').checked }]);
             document.getElementById('diaryInput').value = '';
             fetchDiaries();
         }
