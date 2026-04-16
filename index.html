@@ -24,14 +24,14 @@
             min-height: 100vh; padding: 40px 20px; overflow-x: hidden;
         }
 
-        /* 音乐旋转按钮 */
+        /* 音乐 🎵 */
         #musicToggle {
             position: fixed; top: 20px; right: 20px; z-index: 1100;
-            cursor: pointer; font-size: 1.8rem; opacity: 0.7; transition: 0.3s;
-            user-select: none; filter: drop-shadow(0 0 5px var(--autumn-gold));
+            cursor: pointer; font-size: 1.6rem; opacity: 0.8; transition: 0.3s;
+            filter: drop-shadow(0 0 5px var(--autumn-gold));
         }
-        #musicToggle.playing { animation: rotate 4s linear infinite; opacity: 1; }
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        #musicToggle.playing { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
         #passcodeOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--forest-bg); z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.5s; }
         #heart-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
@@ -49,35 +49,25 @@
         }
         textarea { width: 100%; background: transparent; border: none; color: white; font-size: 1.1rem; resize: none; outline: none; height: 70px; }
         
-        .mood-selector { display: flex; gap: 12px; margin: 15px 0; }
-        .mood-btn { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: 0.3s; }
-        .mood-btn.active { border-color: white; transform: scale(1.2); box-shadow: 0 0 10px white; }
+        /* 18px 精致圆点 */
+        .mood-selector { display: flex; gap: 12px; margin: 12px 0; }
+        .mood-btn { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 1.5px solid transparent; transition: 0.3s; }
+        .mood-btn.active { border-color: white; transform: scale(1.2); box-shadow: 0 0 8px white; }
 
         .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-        .author-input { background: rgba(255,255,255,0.08); border: 1px solid #444; color: #eee; border-radius: 12px; padding: 6px 12px; width: 80px; outline: none; }
-        
-        button#publishBtn {
-            background: var(--autumn-gold); border: none; padding: 10px 22px;
-            border-radius: 25px; cursor: pointer; font-weight: bold; color: #1c2b23;
-            transition: 0.3s; box-shadow: 0 4px 15px rgba(255,179,71,0.3);
-        }
+        .author-input { background: rgba(255,255,255,0.08); border: 1px solid #444; color: #eee; border-radius: 12px; padding: 6px 12px; width: 80px; font-size: 0.9rem; }
+        button#publishBtn { background: var(--autumn-gold); border: none; padding: 10px 22px; border-radius: 25px; cursor: pointer; font-weight: bold; color: #1c2b23; transition: 0.3s; }
 
         #diary-list { width: 100%; max-width: 500px; z-index: 1; }
         .diary-item {
             background: var(--card-bg); padding: 20px; border-radius: 18px;
             margin-bottom: 20px; border: 1px solid var(--card-border);
-            backdrop-filter: blur(5px); position: relative;
+            border-left: 5px solid var(--autumn-gold); backdrop-filter: blur(5px);
+            position: relative;
         }
         .diary-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
-        .diary-time { font-size: 0.8rem; color: var(--forest-text); }
-        .author-tag { color: var(--autumn-gold); font-weight: bold; margin-right: 8px; }
         .actions { display: flex; gap: 15px; }
-        .action-btn { background: none; border: none; cursor: pointer; color: var(--forest-text); opacity: 0.6; }
-        .action-btn:hover { color: var(--autumn-gold); opacity: 1; }
-
-        #customModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-content { background: var(--forest-bg); border: 1px solid var(--autumn-gold); padding: 30px; border-radius: 20px; text-align: center; width: 80%; max-width: 320px; }
-        .modal-btns { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
+        .action-btn { background: none; border: none; cursor: pointer; color: #8da399; opacity: 0.6; }
 
         @keyframes fall {
             0% { transform: translateY(-10vh) rotate(0deg) scale(0.8); opacity: 0; }
@@ -95,7 +85,7 @@
 <body>
 
     <div id="musicToggle" onclick="toggleMusic()">🎵</div>
-    <audio id="bgMusic" loop src="./忧 - Oh Love（哦哦爱） _H.mp3"></audio>
+    <audio id="bgMusic" loop src="./love.mp3"></audio>
 
     <div id="passcodeOverlay">
         <input type="password" id="passInput" placeholder="输入暗号..." style="background:transparent; border:none; border-bottom:1px solid #ffb347; color:white; text-align:center; outline:none; font-size:1.2rem;" oninput="checkPass(this.value)">
@@ -110,11 +100,13 @@
 
     <div class="input-section">
         <textarea id="diaryInput" placeholder="存入此时此刻..."></textarea>
+        
         <div class="mood-selector">
             <div class="mood-btn active" onclick="setMood('gold', this)" style="background: var(--autumn-gold);"></div>
             <div class="mood-btn" onclick="setMood('pink', this)" style="background: var(--love-pink);"></div>
             <div class="mood-btn" onclick="setMood('blue', this)" style="background: var(--tired-blue);"></div>
         </div>
+
         <div class="controls">
             <input type="text" id="authorName" class="author-input" value="林间">
             <div style="display:flex; align-items:center; gap:10px;">
@@ -125,16 +117,6 @@
     </div>
 
     <div id="diary-list"></div>
-
-    <div id="customModal">
-        <div class="modal-content">
-            <p>要把这段记忆抹去吗？</p >
-            <div class="modal-btns">
-                <button onclick="closeModal()" style="background:transparent; color:white; border:1px solid #555; padding:8px 20px; border-radius:20px; cursor:pointer;">取消</button>
-                <button id="modalConfirmBtn" style="background:var(--autumn-gold); color:#1c2b23; border:none; padding:8px 20px; border-radius:20px; font-weight:bold; cursor:pointer;">确定</button>
-            </div>
-        </div>
-    </div>
 
     <script>
         const SUPABASE_URL = 'https://hhsonthokjwhpcgbpnru.supabase.co';
@@ -149,14 +131,10 @@
             const music = document.getElementById('bgMusic');
             const btn = document.getElementById('musicToggle');
             if (music.paused) {
-                music.play().then(() => {
-                    btn.classList.add('playing');
-                    btn.innerText = '💿';
-                }).catch(() => { alert("点一下音符就能听见森林的声音啦~"); });
+                music.play().then(() => btn.classList.add('playing')).catch(() => console.log("Waiting for user interaction"));
             } else {
                 music.pause();
                 btn.classList.remove('playing');
-                btn.innerText = '🎵';
             }
         }
 
@@ -172,34 +150,54 @@
             const { data } = await supabaseClient.from('ForestLog').select('*').order('created_at', { ascending: false });
             if (data) {
                 const now = new Date();
-                const filtered = data.filter(item => !item.is_capsule || (now - new Date(item.created_at)) > 86400000);
-                document.getElementById('diary-list').innerHTML = filtered.map(item => `
-                    <div class="diary-item" style="border-left: 5px solid ${moodColors[item.mood] || moodColors.gold}">
-                        <div class="diary-header">
-                            <div class="diary-time"><span class="author-tag">${item.author}</span>${new Date(item.created_at).toLocaleString()}</div>
-                            <div class="actions">
-                                <button class="action-btn" onclick="startEdit('${item.id}', \`${item.content}\`, '${item.author}')">✎</button>
-                                <button class="action-btn" onclick="openDeleteModal('${item.id}')">✕</button>
-                            </div>
-                        </div>
-                        <div style="line-height:1.8; white-space:pre-wrap;">${item.content}</div>
-                    </div>
-                `).join('');
+                const filtered = data.filter(item => {
+                    if (!item.is_capsule) return true;
+                    return (now - new Date(item.created_at)) > 86400000;
+                });
+                render(filtered);
             }
+        }
+
+        function render(data) {
+            document.getElementById('diary-list').innerHTML = data.map(item => `
+                <div class="diary-item" style="border-left: 5px solid ${moodColors[item.mood] || moodColors.gold}">
+                    <div class="diary-header">
+                        <div style="font-size:0.8rem; color:#8da399"><span style="color:#ffb347; font-weight:bold; margin-right:8px;">${item.author}</span>${new Date(item.created_at).toLocaleString()}</div>
+                        <div class="actions">
+                            <button class="action-btn" onclick="startEdit('${item.id}', \`${item.content}\`, '${item.author}')">✎</button>
+                            <button class="action-btn" onclick="deleteEntry('${item.id}')">✕</button>
+                        </div>
+                    </div>
+                    <div style="line-height:1.8; white-space:pre-wrap;">${item.content}</div>
+                </div>
+            `).join('');
         }
 
         async function publishEntry() {
             const content = document.getElementById('diaryInput').value.trim();
             const author = document.getElementById('authorName').value || '林间';
+            const isCapsule = document.getElementById('capsuleCheck').checked;
             if (!content) return;
+            
             if (editingId) {
                 await supabaseClient.from('ForestLog').update({ content, author, mood: currentMood }).eq('id', editingId);
                 editingId = null;
                 document.getElementById('publishBtn').innerText = '发布日志';
             } else {
-                await supabaseClient.from('ForestLog').insert([{ content, author, mood: currentMood, is_capsule: document.getElementById('capsuleCheck').checked }]);
+                await supabaseClient.from('ForestLog').insert([{ 
+                    content, author, mood: currentMood, is_capsule: isCapsule 
+                }]);
             }
-            document.getElementById('diaryInput').value = '';
+            
+            if (isCapsule) {
+                document.getElementById('diaryInput').value = '';
+                document.getElementById('diaryInput').placeholder = "⏳ 记忆已存入时光胶囊，24小时后开启...";
+                setTimeout(() => { document.getElementById('diaryInput').placeholder = "存入此时此刻..."; }, 3000);
+            } else {
+                document.getElementById('diaryInput').value = '';
+            }
+            document.getElementById('capsuleCheck').checked = false;
+            fetchDiaries();
         }
 
         function setMood(mood, btn) {
@@ -208,14 +206,10 @@
             btn.classList.add('active');
         }
 
-        function openDeleteModal(id) {
-            document.getElementById('customModal').style.display = 'flex';
-            document.getElementById('modalConfirmBtn').onclick = async () => {
-                await supabaseClient.from('ForestLog').delete().eq('id', id);
-                closeModal();
-            };
+        async function deleteEntry(id) {
+            await supabaseClient.from('ForestLog').delete().eq('id', id);
+            fetchDiaries();
         }
-        function closeModal() { document.getElementById('customModal').style.display = 'none'; }
         
         function startEdit(id, content, author) {
             editingId = id;
