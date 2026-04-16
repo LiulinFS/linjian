@@ -13,7 +13,7 @@
             --autumn-gold: #ffb347;
             --love-pink: #ff85a1;
             --tired-blue: #70a1ff;
-            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-bg: rgba(255, 255, 255, 0.08); 
             --card-border: rgba(255, 255, 255, 0.1);
         }
 
@@ -27,7 +27,6 @@
         #musicToggle {
             position: fixed; top: 20px; right: 20px; z-index: 1100;
             cursor: pointer; font-size: 1.6rem; opacity: 0.8; transition: 0.3s;
-            filter: drop-shadow(0 0 5px var(--autumn-gold));
         }
         #musicToggle.playing { animation: pulse 2s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
@@ -36,20 +35,25 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: var(--forest-bg); z-index: 2000; 
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
+            transition: 0.8s; 
         }
         
         #enterBtn {
             margin-top: 25px; padding: 10px 40px; 
             background: var(--autumn-gold); border: none; color: #1c2b23; 
             border-radius: 25px; cursor: pointer; font-size: 1rem; font-weight: bold;
-            box-shadow: 0 4px 15px rgba(255,179,71,0.3);
             opacity: 0; transform: translateY(10px); pointer-events: none; transition: 0.3s;
         }
         #enterBtn.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
         #heart-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-        .heart { position: absolute; filter: drop-shadow(0 0 8px rgba(255,179,71,0.4)); animation: fall linear infinite; }
+        .heart { position: absolute; filter: drop-shadow(0 0 8px rgba(255,179,71,0.4)); animation: fall linear infinite; top: -50px; }
+
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
+            10% { opacity: 0.8; }
+            100% { transform: translateY(110vh) rotate(360deg) scale(1.2); opacity: 0; }
+        }
 
         header { text-align: center; margin-top: 100px; margin-bottom: 30px; z-index: 1; }
         .forest-text { font-size: 1.6rem; color: var(--forest-dark); font-weight: bold; margin-bottom: 12px; }
@@ -57,20 +61,30 @@
 
         .input-section {
             width: 100%; max-width: 500px; background: var(--card-bg);
-            padding: 20px; border-radius: 18px; margin-bottom: 25px;
+            padding: 15px; border-radius: 18px; margin-bottom: 25px;
             border: 1px solid var(--card-border); z-index: 1; backdrop-filter: blur(10px);
         }
         textarea { width: 100%; background: transparent; border: none; color: white; font-size: 1.1rem; resize: none; outline: none; height: 60px; }
         
         .mood-selector { display: flex; gap: 12px; margin: 10px 0; }
         .mood-btn { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 1.5px solid transparent; transition: 0.3s; }
-        .mood-btn.active { border-color: white; transform: scale(1.2); box-shadow: 0 0 8px white; }
+        .mood-btn.active { border-color: white; transform: scale(1.2); }
 
         .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; flex-wrap: wrap; gap: 10px; }
-        .author-input { background: rgba(255,255,255,0.08); border: 1px solid #444; color: #eee; border-radius: 10px; padding: 6px 10px; width: 80px; font-size: 0.9rem; }
+        .author-input { background: rgba(255,255,255,0.08); border: 1px solid #444; color: #eee; border-radius: 10px; padding: 6px 10px; width: 80px; }
         
-        /* 时间选择器样式微调 */
-        #capsuleTime { background: rgba(255,255,255,0.1); border: 1px solid var(--autumn-gold); color: white; border-radius: 8px; padding: 4px 8px; font-size: 0.8rem; display: none; outline: none; }
+        /* 🟡 日期选择框提亮：不再是黑色 */
+        #capsuleTime { 
+            background: rgba(255, 255, 255, 0.9); 
+            border: 1px solid var(--autumn-gold); 
+            color: #1c2b23; 
+            border-radius: 8px; 
+            padding: 4px 8px; 
+            font-size: 0.85rem; 
+            display: none; 
+            outline: none;
+            font-weight: bold;
+        }
         
         button#publishBtn { background: var(--autumn-gold); border: none; padding: 10px 22px; border-radius: 25px; cursor: pointer; font-weight: bold; color: #1c2b23; }
 
@@ -84,9 +98,10 @@
             border-left: 5px solid var(--autumn-gold); 
             backdrop-filter: blur(5px);
             position: relative;
-            text-align: left; /* 🟢 强制正文靠左对齐 */
+            text-align: left !important; /* 🟢 强制靠左 */
         }
 
+        .diary-header { display: flex; justify-content: space-between; margin-bottom: 6px; text-align: left; }
         .actions { display: flex; gap: 12px; align-items: center; }
         .action-btn { background: none; border: none; color: var(--forest-text); cursor: pointer; opacity: 0.5; font-size: 1rem; }
 
@@ -99,9 +114,7 @@
 <body>
 
     <div id="musicToggle" onclick="toggleMusic()">🎵</div>
-    <audio id="bgMusic" loop preload="auto" muted>
-        <source src="./Love.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="bgMusic" loop preload="auto" muted><source src="./Love.mp3" type="audio/mpeg"></audio>
 
     <div id="passcodeOverlay">
         <p style="color: #8da399; margin-bottom: 15px;">输入暗号进入林间</p >
@@ -167,9 +180,8 @@
             const toggle = document.getElementById('musicToggle');
             const overlay = document.getElementById('passcodeOverlay');
             music.muted = false; music.volume = 1.0;
-            music.play().then(() => toggle.classList.add('playing')).catch(e => console.log("Waiting interaction"));
+            music.play().then(() => toggle.classList.add('playing')).catch(e => console.log("Wait"));
             overlay.style.opacity = '0';
-            overlay.style.transform = 'scale(1.1)';
             setTimeout(() => { overlay.style.display = 'none'; startSite(); }, 800);
         }
 
@@ -191,21 +203,18 @@
             if (!list) return;
             const now = new Date();
             list.innerHTML = data.map(item => {
-                // 核心：计算解锁时间。如果有自定义时间用自定义，否则默认24小时
                 const unlockAt = item.unlock_at ? new Date(item.unlock_at) : new Date(new Date(item.created_at).getTime() + 86400000);
                 const isLocked = item.is_capsule && now < unlockAt;
-                
                 let timeTip = '';
                 if (isLocked) {
                     const diff = unlockAt - now;
                     const h = Math.floor(diff / 3600000);
                     const m = Math.floor((diff % 3600000) / 60000);
-                    timeTip = ` (预计 ${h > 0 ? h + '小时' : ''}${m}分钟 后开启)`;
+                    timeTip = ` (预计 ${h}时${m}分 后开启)`;
                 }
-
                 return `
                 <div class="diary-item" style="border-left: 5px solid ${moodColors[item.mood] || moodColors.gold}">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                    <div class="diary-header">
                         <div style="font-size:0.8rem; color:#8da399">
                             <span style="color:#ffb347; font-weight:bold; margin-right:8px;">${item.author || '匿名'}</span>
                             ${new Date(item.created_at).toLocaleString()}
@@ -215,7 +224,7 @@
                             <button class="action-btn" onclick="deleteEntry('${item.id}')">✕</button>
                         </div>
                     </div>
-                    <div style="line-height:1.6; white-space:pre-wrap; ${isLocked ? 'color:#555; font-style:italic;' : ''}">
+                    <div style="line-height:1.6; white-space:pre-wrap; text-align:left; ${isLocked ? 'color:#555; font-style:italic;' : ''}">
                         ${isLocked ? `⏳ 时光胶囊：传送中...${timeTip}` : item.content}
                     </div>
                 </div>
@@ -227,23 +236,11 @@
             const author = document.getElementById('authorName').value || '匿名';
             const isCapsule = document.getElementById('capsuleCheck').checked;
             const unlockAt = document.getElementById('capsuleTime').value;
-
             if (!content) return;
-            
             const payload = { content, author, mood: currentMood, is_capsule: isCapsule };
-            // 如果勾选胶囊并选了时间，存入数据库
-            if (isCapsule && unlockAt) {
-                payload.unlock_at = new Date(unlockAt).toISOString();
-            }
-
-            if (editingId) {
-                await supabaseClient.from('ForestLog').update(payload).eq('id', editingId);
-                editingId = null;
-                document.getElementById('publishBtn').innerText = '发布日志';
-            } else {
-                await supabaseClient.from('ForestLog').insert([payload]);
-            }
-            
+            if (isCapsule && unlockAt) { payload.unlock_at = new Date(unlockAt).toISOString(); }
+            if (editingId) { await supabaseClient.from('ForestLog').update(payload).eq('id', editingId); editingId = null; } 
+            else { await supabaseClient.from('ForestLog').insert([payload]); }
             document.getElementById('diaryInput').value = '';
             document.getElementById('capsuleCheck').checked = false;
             document.getElementById('capsuleTime').style.display = 'none';
@@ -254,14 +251,10 @@
             editingId = id;
             document.getElementById('diaryInput').value = content;
             document.getElementById('authorName').value = author;
-            document.getElementById('publishBtn').innerText = '保存修改';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        async function deleteEntry(id) {
-            await supabaseClient.from('ForestLog').delete().eq('id', id);
-            fetchDiaries();
-        }
+        async function deleteEntry(id) { await supabaseClient.from('ForestLog').delete().eq('id', id); fetchDiaries(); }
 
         function setMood(mood, btn) {
             currentMood = mood;
@@ -270,6 +263,8 @@
         }
 
         function createHeart() {
+            const container = document.getElementById('heart-container');
+            if (!container) return;
             const heart = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             heart.setAttribute("viewBox", "0 0 24 24");
             heart.setAttribute("class", "heart");
@@ -279,12 +274,12 @@
             heart.style.animationDuration = (Math.random() * 4 + 6) + "s";
             heart.style.fill = moodColors[currentMood];
             heart.innerHTML = `<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>`;
-            document.getElementById('heart-container').appendChild(heart);
-            setTimeout(() => heart.remove(), 15000);
+            container.appendChild(heart);
+            setTimeout(() => heart.remove(), 10000);
         }
 
         function startSite() {
-            setInterval(createHeart, 300);
+            setInterval(createHeart, 400); // 稍微放慢一点频率，避免太乱
             supabaseClient.channel('any').on('postgres_changes', { event: '*', schema: 'public', table: 'ForestLog' }, fetchDiaries).subscribe();
         }
     </script>
