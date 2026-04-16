@@ -24,6 +24,7 @@
             min-height: 100vh; padding: 0 20px; overflow-x: hidden;
         }
 
+        /* 🎵 音乐按钮 */
         #musicToggle {
             position: fixed; top: 20px; right: 20px; z-index: 1100;
             cursor: pointer; font-size: 1.6rem; opacity: 0.8; transition: 0.3s;
@@ -32,6 +33,7 @@
         #musicToggle.playing { animation: pulse 2s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
+        /* 暗号遮罩 */
         #passcodeOverlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: var(--forest-bg); z-index: 2000; 
@@ -51,9 +53,10 @@
         #heart-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
         .heart { position: absolute; filter: drop-shadow(0 0 8px rgba(255,179,71,0.4)); animation: fall linear infinite; }
 
-        header { text-align: center; margin-top: 80px; margin-bottom: 40px; z-index: 1; }
+        /* 标题区：维持 120px 间距，不顶头 */
+        header { text-align: center; margin-top: 120px; margin-bottom: 40px; z-index: 1; }
         .forest-text { font-size: 1.6rem; color: var(--forest-dark); font-weight: bold; margin-bottom: 12px; }
-        .autumn-text { font-size: 2.3rem; color: var(--autumn-gold); font-weight: bold; }
+        .autumn-text { font-size: 2.1rem; color: var(--autumn-gold); font-weight: bold; }
 
         .input-section {
             width: 100%; max-width: 500px; background: var(--card-bg);
@@ -62,6 +65,7 @@
         }
         textarea { width: 100%; background: transparent; border: none; color: white; font-size: 1.1rem; resize: none; outline: none; height: 70px; }
         
+        /* 精致 18px 小圆点 */
         .mood-selector { display: flex; gap: 12px; margin: 12px 0; }
         .mood-btn { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 1.5px solid transparent; transition: 0.3s; }
         .mood-btn.active { border-color: white; transform: scale(1.2); box-shadow: 0 0 8px white; }
@@ -85,7 +89,7 @@
         }
 
         @media (max-width: 600px) {
-            header { margin-top: 100px; } 
+            header { margin-top: 120px; } 
             .forest-text { font-size: 1.25rem; }
             .autumn-text { font-size: 1.6rem; }
             .input-section, #diary-list { width: 92%; padding: 15px; }
@@ -120,7 +124,7 @@
             <div class="mood-btn" onclick="setMood('blue', this)" style="background: var(--tired-blue);"></div>
         </div>
         <div class="controls">
-            <input type="text" id="authorName" class="author-input" value="林间">
+            <input type="text" id="authorName" class="author-input" value="">
             <div style="display:flex; align-items:center; gap:10px;">
                 <label style="font-size:0.8rem; color:#8da399; cursor:pointer;"><input type="checkbox" id="capsuleCheck"> 时光胶囊</label>
                 <button id="publishBtn" onclick="publishEntry()">发布日志</button>
@@ -138,14 +142,15 @@
         let currentMood = 'gold';
         const moodColors = { gold: '#ffb347', pink: '#ff85a1', blue: '#70a1ff' };
 
-        // --- 核心优化：打开网页立即拉取数据 ---
+        // --- 核心优化：打开网页第一秒就开始拿数据 ---
         fetchDiaries();
 
         function validatePass(val) {
             const btn = document.getElementById('enterBtn');
             if (val === '邱天' || val === '1314') {
                 btn.classList.add('visible');
-                fetchDiaries(); // 再次确认数据最新
+                // 暗号对了，立马再刷一遍数据，确保进场时最新
+                fetchDiaries();
             } else {
                 btn.classList.remove('visible');
             }
@@ -158,7 +163,7 @@
 
             music.muted = false;
             music.volume = 1.0;
-            music.play().then(() => toggle.classList.add('playing')).catch(e => console.log("等待手势"));
+            music.play().then(() => toggle.classList.add('playing')).catch(e => console.log("Waiting interaction"));
 
             overlay.style.opacity = '0';
             overlay.style.transform = 'scale(1.1)';
@@ -190,7 +195,9 @@
         }
 
         function renderDiaries(data) {
-            document.getElementById('diary-list').innerHTML = data.map(item => `
+            const list = document.getElementById('diary-list');
+            if (!list) return;
+            list.innerHTML = data.map(item => `
                 <div class="diary-item" style="border-left: 5px solid ${moodColors[item.mood] || moodColors.gold}">
                     <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
                         <div style="font-size:0.8rem; color:#8da399"><span style="color:#ffb347; font-weight:bold; margin-right:8px;">${item.author}</span>${new Date(item.created_at).toLocaleString()}</div>
@@ -203,7 +210,7 @@
 
         async function publishEntry() {
             const content = document.getElementById('diaryInput').value.trim();
-            const author = document.getElementById('authorName').value || '';
+            const author = document.getElementById('authorName').value || '林间';
             if (!content) return;
             await supabaseClient.from('ForestLog').insert([{ content, author, mood: currentMood, is_capsule: document.getElementById('capsuleCheck').checked }]);
             document.getElementById('diaryInput').value = '';
