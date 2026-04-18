@@ -24,7 +24,7 @@
             min-height: 100vh; padding: 0 20px; overflow-x: hidden;
         }
 
-        #musicToggle { position: fixed; top: 20px; right: 20px; z-index: 1100; cursor: pointer; font-size: 1.6rem; opacity: 0.8; }
+        #musicToggle { position: fixed; top: 20px; right: 20px; z-index: 1100; cursor: pointer; font-size: 1.6rem; }
         #musicToggle.playing { animation: pulse 2s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
@@ -36,39 +36,43 @@
         .heart { position: absolute; filter: drop-shadow(0 0 8px rgba(255,179,71,0.4)); animation: fall linear infinite; top: -50px; }
         @keyframes fall { 0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; } 10% { opacity: 0.8; } 100% { transform: translateY(110vh) rotate(360deg) scale(1.2); opacity: 0; } }
 
-        header { text-align: center; margin-top: 100px; margin-bottom: 30px; z-index: 1; }
-        .forest-text { font-size: 1.6rem; color: var(--forest-dark); font-weight: bold; margin-bottom: 12px; }
-        .autumn-text { font-size: 2.3rem; color: var(--autumn-gold); font-weight: bold; }
+        header { text-align: center; margin-top: 80px; margin-bottom: 25px; z-index: 1; }
+        .forest-text { font-size: 1.4rem; color: var(--forest-dark); font-weight: bold; margin-bottom: 8px; }
+        .autumn-text { font-size: 1.8rem; color: var(--autumn-gold); font-weight: bold; }
 
-        /* 输入区样式 */
-        .input-section { width: 100%; max-width: 500px; background: var(--card-bg); padding: 15px; border-radius: 18px; margin-bottom: 25px; border: 1px solid var(--card-border); z-index: 1; backdrop-filter: blur(10px); box-sizing: border-box; }
-        textarea { width: 100%; background: transparent; border: none; color: white; font-size: 1.1rem; resize: none; outline: none; height: 60px; box-sizing: border-box; }
+        .input-section { width: 100%; max-width: 500px; background: var(--card-bg); padding: 12px 15px; border-radius: 18px; margin-bottom: 20px; border: 1px solid var(--card-border); z-index: 1; backdrop-filter: blur(10px); box-sizing: border-box; }
+        textarea { width: 100%; background: transparent; border: none; color: white; font-size: 1.1rem; resize: none; outline: none; height: 50px; box-sizing: border-box; }
         
-        /* 图片预览区 */
-        #imagePreview { width: 50px; height: 50px; object-fit: cover; border-radius: 6px; display: none; margin-bottom: 10px; border: 1px solid var(--autumn-gold); }
+        #imagePreview { width: 50px; height: 50px; object-fit: cover; border-radius: 6px; display: none; margin-bottom: 8px; border: 1px solid var(--autumn-gold); }
 
-        .mood-selector { display: flex; gap: 12px; margin: 10px 0; }
-        .mood-btn { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 1.5px solid transparent; transition: 0.3s; }
-        .mood-btn.active { border-color: white; transform: scale(1.2); box-shadow: 0 0 8px white; }
+        .mood-selector { display: flex; gap: 10px; margin: 8px 0; }
+        .mood-btn { width: 16px; height: 16px; border-radius: 50%; cursor: pointer; border: 1.5px solid transparent; }
+        .mood-btn.active { border-color: white; transform: scale(1.2); }
 
-        .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; flex-wrap: wrap; gap: 10px; }
-        .author-input { background: rgba(255,255,255,0.08); border: 1px solid #444; color: #eee; border-radius: 10px; padding: 6px 10px; width: 80px; font-size: 0.9rem; }
-        #capsuleTime { background: #ffffff !important; color: #000000 !important; border: 2px solid var(--autumn-gold); border-radius: 8px; padding: 4px; font-size: 0.8rem; display: none; font-weight: bold; }
+        .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; flex-wrap: wrap; gap: 8px; }
+        .author-input { background: rgba(255,255,255,0.08); border: 1px solid #444; color: #eee; border-radius: 10px; padding: 4px 10px; width: 70px; font-size: 0.85rem; }
         
-        .photo-btn { font-size: 1.2rem; cursor: pointer; opacity: 0.8; transition: 0.3s; }
-        button#publishBtn { background: var(--autumn-gold); border: none; padding: 10px 22px; border-radius: 25px; cursor: pointer; font-weight: bold; color: #1c2b23; }
+        #capsuleTime { background: #fff !important; color: #000 !important; border-radius: 6px; padding: 2px 6px; font-size: 0.75rem; display: none; }
+        .photo-btn { font-size: 1.1rem; cursor: pointer; opacity: 0.8; }
+        button#publishBtn { background: var(--autumn-gold); border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-weight: bold; color: #1c2b23; }
 
-        /* 日志项 - 保持你最喜欢的紧致布局 */
         #diary-list { width: 100%; max-width: 500px; z-index: 1; padding-bottom: 50px; box-sizing: border-box; }
-        .diary-item { background: var(--card-bg); padding: 10px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--card-border); border-left: 5px solid var(--autumn-gold) !important; backdrop-filter: blur(5px); position: relative; width: 100%; box-sizing: border-box; }
-        .diary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-        .diary-text { text-align: left !important; line-height: 1.5; white-space: pre-wrap; font-size: 1rem; word-break: break-word; margin: 0; padding: 0; color: white; }
-        .diary-image { width: 100%; max-width: 300px; border-radius: 8px; margin-top: 10px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; display: block; }
+        .diary-item { background: var(--card-bg); padding: 8px 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid var(--card-border); border-left: 4px solid var(--autumn-gold) !important; backdrop-filter: blur(5px); position: relative; width: 100%; box-sizing: border-box; text-align: left !important; }
+        .diary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .diary-text { text-align: left !important; line-height: 1.4; white-space: pre-wrap; font-size: 0.95rem; word-break: break-word; color: white; }
+        .diary-image { width: 100%; max-width: 260px; border-radius: 8px; margin-top: 8px; cursor: pointer; display: block; }
 
-        .actions { display: flex; gap: 12px; align-items: center; }
-        .action-btn { background: none; border: none; color: var(--forest-text); cursor: pointer; opacity: 0.5; font-size: 1rem; }
+        /* 回复区域样式 */
+        .replies-section { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .reply-item { font-size: 0.85rem; color: #8da399; margin-bottom: 4px; padding-left: 10px; border-left: 2px solid rgba(255,179,71,0.3); }
+        .reply-name { color: var(--autumn-gold); font-weight: bold; margin-right: 5px; }
+        .reply-input-box { display: none; margin-top: 8px; gap: 8px; }
+        .reply-field { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid #444; color: white; border-radius: 15px; padding: 4px 12px; font-size: 0.85rem; outline: none; }
 
-        @media (max-width: 600px) { header { margin-top: 100px; } .input-section, #diary-list { width: 92%; padding: 15px; } }
+        .actions { display: flex; gap: 10px; align-items: center; }
+        .action-btn { background: none; border: none; color: var(--forest-text); cursor: pointer; opacity: 0.5; font-size: 0.9rem; }
+
+        @media (max-width: 600px) { header { margin-top: 80px; } .input-section, #diary-list { width: 92%; } }
     </style>
 </head>
 <body>
@@ -99,7 +103,7 @@
         </div>
         <div class="controls">
             <input type="text" id="authorName" class="author-input" value="" placeholder="名字">
-            <div style="display:flex; align-items:center; gap:8px;">
+            <div style="display:flex; align-items:center; gap:10px;">
                 <label for="fileInput" class="photo-btn">📷</label>
                 <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(this)">
                 <label style="font-size:0.8rem; color:#8da399; cursor:pointer;"><input type="checkbox" id="capsuleCheck" onchange="toggleTimeInput(this)"> 胶囊</label>
@@ -148,7 +152,7 @@
             const music = document.getElementById('bgMusic');
             const toggle = document.getElementById('musicToggle');
             music.muted = false; music.volume = 1.0;
-            music.play().then(() => toggle.classList.add('playing')).catch(e => console.log("Music wait"));
+            music.play().then(() => toggle.classList.add('playing')).catch(e => console.log("Music Wait"));
             document.getElementById('passcodeOverlay').style.opacity = '0';
             setTimeout(() => { document.getElementById('passcodeOverlay').style.display = 'none'; startSite(); }, 800);
         }
@@ -177,22 +181,61 @@
                 if (isLocked) {
                     const diff = unlockAt - now;
                     const h = Math.floor(diff / 3600000); const m = Math.floor((diff % 3600000) / 60000);
-                    timeTip = ` (⏳ 预计 ${h}时${m}分后开启)`;
+                    timeTip = ` (⏳ ${h}时${m}分后开启)`;
                 }
                 const imgHtml = (!isLocked && item.image_url) ? `<img src="${item.image_url}" class="diary-image" onclick="window.open(this.src)">` : '';
+                
+                // 处理回复内容显示
+                const replies = item.replies || [];
+                const repliesHtml = replies.map(r => `
+                    <div class="reply-item">
+                        <span class="reply-name">${r.name}:</span>${r.text}
+                    </div>
+                `).join('');
+
                 return `
                 <div class="diary-item" style="border-left-color: ${moodColors[item.mood] || moodColors.gold} !important;">
                     <div class="diary-header">
-                        <div style="font-size:0.8rem; color:#8da399"><span style="color:#ffb347; font-weight:bold; margin-right:8px;">${item.author || '匿名'}</span>${new Date(item.created_at).toLocaleString()}</div>
+                        <div style="font-size:0.75rem; color:#8da399"><span style="color:#ffb347; font-weight:bold; margin-right:8px;">${item.author || '匿名'}</span>${new Date(item.created_at).toLocaleString()}</div>
                         <div class="actions">
+                            <button class="action-btn" title="回复" onclick="toggleReplyBox('${item.id}')">💬</button>
                             <button class="action-btn" onclick="startEdit('${item.id}', \`${item.content.replace(/'/g, "\\'")}\`, '${item.author}')">✎</button>
                             <button class="action-btn" onclick="deleteEntry('${item.id}')">✕</button>
                         </div>
                     </div>
                     <div class="diary-text" style="${isLocked ? 'color:#555; font-style:italic;' : ''}">${isLocked ? `时光胶囊传送中...${timeTip}` : item.content}</div>
                     ${imgHtml}
+                    
+                    <div class="replies-section" id="replies-${item.id}">
+                        ${repliesHtml}
+                        <div class="reply-input-box" id="reply-box-${item.id}">
+                            <input type="text" class="reply-field" id="reply-input-${item.id}" placeholder="写下回复...">
+                            <button onclick="submitReply('${item.id}')" style="background:var(--autumn-gold); border:none; border-radius:15px; padding:2px 10px; font-size:0.75rem; cursor:pointer;">发送</button>
+                        </div>
+                    </div>
                 </div>`;
             }).join('');
+        }
+
+        function toggleReplyBox(id) {
+            const box = document.getElementById(`reply-box-${id}`);
+            box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        async function submitReply(id) {
+            const input = document.getElementById(`reply-input-${id}`);
+            const text = input.value.trim();
+            const name = document.getElementById('authorName').value || '匿名';
+            if (!text) return;
+
+            // 获取原有的回复
+            const { data: item } = await supabaseClient.from('ForestLog').select('replies').eq('id', id).single();
+            const newReplies = [...(item.replies || []), { name, text, time: new Date() }];
+
+            await supabaseClient.from('ForestLog').update({ replies: newReplies }).eq('id', id);
+            input.value = '';
+            toggleReplyBox(id);
+            fetchDiaries();
         }
 
         async function publishEntry() {
@@ -237,13 +280,13 @@
             if (!container) return;
             const heart = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             heart.setAttribute("viewBox", "0 0 24 24"); heart.setAttribute("class", "heart");
-            const size = Math.random() * 20 + 30; heart.style.width = size + "px"; heart.style.left = Math.random() * 100 + "vw";
+            const size = Math.random() * 15 + 25; heart.style.width = size + "px"; heart.style.left = Math.random() * 100 + "vw";
             heart.style.animationDuration = (Math.random() * 4 + 6) + "s"; heart.style.fill = moodColors[currentMood];
-            heart.innerHTML = `<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>`;
+            heart.innerHTML = `<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>`;
             container.appendChild(heart); setTimeout(() => heart.remove(), 10000);
         }
 
-        function startSite() { setInterval(createHeart, 300); supabaseClient.channel('any').on('postgres_changes', { event: '*', schema: 'public', table: 'ForestLog' }, fetchDiaries).subscribe(); }
+        function startSite() { setInterval(createHeart, 400); supabaseClient.channel('any').on('postgres_changes', { event: '*', schema: 'public', table: 'ForestLog' }, fetchDiaries).subscribe(); }
     </script>
 </body>
 </html>
