@@ -1,347 +1,295 @@
-<!DOCTYPE html>
-<html lang="zh">
+<!DOCTYPE html>
+<html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>林间的邱天</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        :root {
-            --forest-bg: #1c2b23;
-            --forest-dark: #8ED973; 
-            --forest-text: #8da399;
-            --autumn-gold: #ffb347;
-            --love-pink: #ff85a1;
-            --tired-blue: #70a1ff;
-            --card-bg: rgba(255, 255, 255, 0.1); 
-            --card-border: rgba(255, 255, 255, 0.1);
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>林间的邱天</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --forest-bg: #1c2b23;
+            --forest-dark: #8ED973; 
+            --forest-text: #8da399;
+            --autumn-gold: #ffb347;
+            --love-pink: #ff85a1;
+            --tired-blue: #70a1ff;
+            --card-bg: rgba(255, 255, 255, 0.1); 
+            --card-border: rgba(255, 255, 255, 0.1);
+        }
 
-        body {
-            margin: 0; background-color: var(--forest-bg); color: white;
-            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-            display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; padding: 0 20px; overflow-x: hidden;
-        }
+        body {
+            margin: 0; background-color: var(--forest-bg); color: white;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; padding: 0 20px; overflow-x: hidden;
+        }
 
-        #musicToggle { position: fixed; top: 20px; right: 20px; z-index: 1100; cursor: pointer; font-size: 1.6rem; }
-        #musicToggle.playing { animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+        #musicToggle { position: fixed; top: 20px; right: 20px; z-index: 1100; cursor: pointer; font-size: 1.6rem; }
+        #musicToggle.playing { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
-        #passcodeOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--forest-bg); z-index: 2000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.8s; }
-        #enterBtn { margin-top: 25px; padding: 10px 40px; background: var(--autumn-gold); border: none; color: #1c2b23; border-radius: 25px; cursor: pointer; font-weight: bold; opacity: 0; transform: translateY(10px); pointer-events: none; transition: 0.3s; }
-        #enterBtn.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        #passcodeOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--forest-bg); z-index: 2000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.8s; }
+        #enterBtn { margin-top: 25px; padding: 10px 40px; background: var(--autumn-gold); border: none; color: #1c2b23; border-radius: 25px; cursor: pointer; font-weight: bold; opacity: 0; transform: translateY(10px); pointer-events: none; transition: 0.3s; }
+        #enterBtn.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
-        #heart-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-        .heart { position: absolute; filter: drop-shadow(0 0 8px rgba(255,179,71,0.4)); animation: fall linear infinite; top: -50px; }
-        @keyframes fall { 0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; } 10% { opacity: 0.8; } 100% { transform: translateY(110vh) rotate(360deg) scale(1.2); opacity: 0; } }
+        #heart-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .heart { position: absolute; filter: drop-shadow(0 0 8px rgba(255,179,71,0.4)); animation: fall linear infinite; top: -50px; }
+        @keyframes fall { 0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; } 10% { opacity: 0.8; } 100% { transform: translateY(110vh) rotate(360deg) scale(1.2); opacity: 0; } }
 
-        header { text-align: center; margin-top: 80px; margin-bottom: 25px; z-index: 1; }
-        .forest-text { font-size: 1.4rem; color: var(--forest-dark); font-weight: bold; margin-bottom: 8px; }
-        .autumn-text { font-size: 1.8rem; color: var(--autumn-gold); font-weight: bold; }
+        header { text-align: center; margin-top: 80px; margin-bottom: 25px; z-index: 1; }
+        .forest-text { font-size: 1.4rem; color: var(--forest-dark); font-weight: bold; margin-bottom: 8px; }
+        .autumn-text { font-size: 1.8rem; color: var(--autumn-gold); font-weight: bold; }
 
-        .input-section { width: 100%; max-width: 500px; background: var(--card-bg); padding: 12px 15px; border-radius: 18px; margin-bottom: 20px; border: 1px solid var(--card-border); z-index: 1; backdrop-filter: blur(10px); box-sizing: border-box; }
-        textarea { width: 100%; background: transparent; border: none; color: white; font-size: 1.1rem; resize: none; outline: none; height: 50px; box-sizing: border-box; }
-        
-        #imagePreview { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; display: none; margin-bottom: 8px; border: 1px solid var(--autumn-gold); }
+        .input-section { width: 100%; max-width: 500px; background: var(--card-bg); padding: 12px 15px; border-radius: 18px; margin-bottom: 20px; border: 1px solid var(--card-border); z-index: 1; backdrop-filter: blur(10px); box-sizing: border-box; }
+        textarea { width: 100%; background: transparent; border: none; color: white; font-size: 1.1rem; resize: none; outline: none; height: 50px; box-sizing: border-box; }
+        
+        #imagePreview { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; display: none; margin-bottom: 8px; border: 1px solid var(--autumn-gold); }
 
-        .mood-selector { display: flex; gap: 10px; margin: 8px 0; }
-        .mood-btn { width: 16px; height: 16px; border-radius: 50%; cursor: pointer; border: 1.5px solid transparent; }
-        .mood-btn.active { border-color: white; transform: scale(1.2); box-shadow: 0 0 5px white; }
+        .mood-selector { display: flex; gap: 10px; margin: 8px 0; }
+        .mood-btn { width: 16px; height: 16px; border-radius: 50%; cursor: pointer; border: 1.5px solid transparent; }
+        .mood-btn.active { border-color: white; transform: scale(1.2); box-shadow: 0 0 5px white; }
 
-        .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; flex-wrap: wrap; gap: 8px; }
-        .author-input { background: rgba(255,255,255,0.08); border: 1px solid #444; color: #eee; border-radius: 10px; padding: 4px 10px; width: 70px; font-size: 0.85rem; }
-        
-        #capsuleTime { background: #fff !important; color: #000 !important; border-radius: 6px; padding: 2px 6px; font-size: 0.75rem; display: none; }
-        .photo-btn { font-size: 1.2rem; cursor: pointer; opacity: 0.8; margin-right: 5px; }
-        button#publishBtn { background: var(--autumn-gold); border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-weight: bold; color: #1c2b23; }
+        .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; flex-wrap: wrap; gap: 8px; }
+        .author-input { background: rgba(255,255,255,0.08); border: 1px solid #444; color: #eee; border-radius: 10px; padding: 4px 10px; width: 70px; font-size: 0.85rem; }
+        
+        #capsuleTime { background: #fff !important; color: #000 !important; border-radius: 6px; padding: 2px 6px; font-size: 0.75rem; display: none; }
+        .photo-btn { font-size: 1.2rem; cursor: pointer; opacity: 0.8; margin-right: 5px; }
+        button#publishBtn { background: var(--autumn-gold); border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-weight: bold; color: #1c2b23; }
 
-        /* 极致紧凑靠左的日志列表 */
-        #diary-list { width: 100%; max-width: 500px; z-index: 1; padding-bottom: 50px; box-sizing: border-box; }
-        .diary-item { 
-            background: var(--card-bg); 
-            padding: 10px 15px !important; 
-            border-radius: 12px; 
-            margin-bottom: 12px; 
-            border: 1px solid var(--card-border); 
-            border-left: 5px solid var(--autumn-gold) !important; 
-            backdrop-filter: blur(5px); 
-            position: relative; 
-            width: 100%; 
-            box-sizing: border-box; 
-            text-align: left !important; 
-        }
-        .diary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-        .diary-text { text-align: left !important; line-height: 1.4; white-space: pre-wrap; font-size: 0.95rem; word-break: break-word; color: white; margin: 0; padding: 0; }
-        .diary-image { width: 100%; max-width: 260px; border-radius: 8px; margin-top: 8px; cursor: pointer; display: block; border: 1px solid rgba(255,255,255,0.1); }
+        #diary-list { width: 100%; max-width: 500px; z-index: 1; padding-bottom: 50px; box-sizing: border-box; }
+        .diary-item { 
+            background: var(--card-bg); padding: 10px 15px; border-radius: 12px; margin-bottom: 12px; 
+            border: 1px solid var(--card-border); border-left: 5px solid var(--autumn-gold) !important; 
+            backdrop-filter: blur(5px); position: relative; width: 100%; box-sizing: border-box; text-align: left !important; 
+        }
+        .diary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .diary-text { text-align: left !important; line-height: 1.4; white-space: pre-wrap; font-size: 0.95rem; word-break: break-word; color: white; margin: 0; padding: 0; }
+        .diary-image { width: 100%; max-width: 260px; border-radius: 8px; margin-top: 8px; cursor: pointer; display: block; border: 1px solid rgba(255,255,255,0.1); }
 
-        /* 回复区域样式 */
-        .replies-section { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); }
-        .reply-item { font-size: 0.85rem; color: #8da399; margin-bottom: 4px; padding-left: 8px; border-left: 2px solid rgba(255,179,71,0.3); line-height: 1.3; }
-        .reply-name { color: var(--autumn-gold); font-weight: bold; margin-right: 5px; }
-        .reply-input-box { display: none; margin-top: 8px; gap: 8px; align-items: center; }
-        .reply-field { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid #444; color: white; border-radius: 12px; padding: 6px 10px; font-size: 0.85rem; outline: none; }
+        .replies-section { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .reply-item { font-size: 0.85rem; color: #8da399; margin-bottom: 4px; padding-left: 8px; border-left: 2px solid rgba(255,179,71,0.3); }
+        .reply-name { color: var(--autumn-gold); font-weight: bold; margin-right: 5px; }
+        .reply-input-box { display: none; margin-top: 8px; gap: 8px; align-items: center; }
+        .reply-field { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid #444; color: white; border-radius: 12px; padding: 6px 10px; font-size: 0.85rem; outline: none; }
 
-        .actions { display: flex; gap: 10px; align-items: center; }
-        .action-btn { background: none; border: none; color: var(--forest-text); cursor: pointer; opacity: 0.6; font-size: 0.95rem; }
+        .actions { display: flex; gap: 10px; align-items: center; }
+        .action-btn { background: none; border: none; color: var(--forest-text); cursor: pointer; opacity: 0.6; font-size: 0.95rem; }
 
-        @media (max-width: 600px) { header { margin-top: 80px; } .input-section, #diary-list { width: 92%; } }
-    </style>
+        @media (max-width: 600px) { header { margin-top: 80px; } .input-section, #diary-list { width: 92%; } }
+    </style>
 </head>
 <body>
 
-    <div id="musicToggle" onclick="toggleMusic()">🎵</div>
-    <audio id="bgMusic" loop preload="auto" muted><source src="./Love.mp3" type="audio/mpeg"></audio>
+    <div id="musicToggle" onclick="toggleMusic()">🎵</div>
+    <audio id="bgMusic" loop preload="auto" muted><source src="./Love.mp3" type="audio/mpeg"></audio>
 
-    <div id="passcodeOverlay">
-        <p style="color: #8da399; margin-bottom: 15px;">输入暗号进入林间</p>
-        <input type="password" id="passInput" placeholder="请输入..." style="background:transparent; border:none; border-bottom:1px solid #ffb347; color:white; text-align:center; outline:none; font-size:1.2rem;" oninput="validatePass(this.value)">
-        <button id="enterBtn" onclick="grantAccess()">开启森林</button>
-    </div>
+    <div id="passcodeOverlay">
+        <p style="color: #8da399; margin-bottom: 15px;">输入暗号进入林间</p>
+        <input type="password" id="passInput" placeholder="请输入..." style="background:transparent; border:none; border-bottom:1px solid #ffb347; color:white; text-align:center; outline:none; font-size:1.2rem;" oninput="validatePass(this.value)">
+        <button id="enterBtn" onclick="grantAccess()">开启森林</button>
+    </div>
 
-    <div id="heart-container"></div>
+    <div id="heart-container"></div>
 
-    <header>
-        <div class="forest-text">虽然森林很大 有时候容易迷路</div>
-        <div class="autumn-text">但秋天总会如约而至</div>
-    </header>
+    <header>
+        <div class="forest-text">虽然森林很大 有时候容易迷路</div>
+        <div class="autumn-text">但秋天总会如约而至</div>
+    </header>
 
-    <div class="input-section">
-        <img id="imagePreview">
-        <textarea id="diaryInput" placeholder="存入此时此刻..."></textarea>
-        <div class="mood-selector">
-            <div class="mood-btn active" onclick="setMood('gold', this)" style="background: var(--autumn-gold);"></div>
-            <div class="mood-btn" onclick="setMood('pink', this)" style="background: var(--love-pink);"></div>
-            <div class="mood-btn" onclick="setMood('blue', this)" style="background: var(--tired-blue);"></div>
-        </div>
-        <div class="controls">
-            <input type="text" id="authorName" class="author-input" value="" placeholder="名字">
-            <div style="display:flex; align-items:center; gap:8px;">
-                <label for="fileInput" class="photo-btn">📷</label>
-                <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(this)">
-                
-                <label style="font-size:0.8rem; color:#8da399; cursor:pointer;"><input type="checkbox" id="capsuleCheck" onchange="toggleTimeInput(this)"> 胶囊</label>
-                <input type="datetime-local" id="capsuleTime">
-                <button id="publishBtn" type="button" onclick="publishEntry()">发布日志</button>
-            </div>
-        </div>
-    </div>
+    <div class="input-section">
+        <img id="imagePreview">
+        <textarea id="diaryInput" placeholder="存入此时此刻..."></textarea>
+        <div class="mood-selector">
+            <div class="mood-btn active" onclick="setMood('gold', this)" style="background: var(--autumn-gold);"></div>
+            <div class="mood-btn" onclick="setMood('pink', this)" style="background: var(--love-pink);"></div>
+            <div class="mood-btn" onclick="setMood('blue', this)" style="background: var(--tired-blue);"></div>
+        </div>
+        <div class="controls">
+            <input type="text" id="authorName" class="author-input" value="" placeholder="名字">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <label for="fileInput" class="photo-btn">📷</label>
+                <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(this)">
+                <label style="font-size:0.8rem; color:#8da399; cursor:pointer;"><input type="checkbox" id="capsuleCheck" onchange="toggleTimeInput(this)"> 胶囊</label>
+                <input type="datetime-local" id="capsuleTime">
+                <button id="publishBtn" onclick="publishEntry()">发布日志</button>
+            </div>
+        </div>
+    </div>
 
-    <div id="diary-list"></div>
+    <div id="diary-list"></div>
 
-    <script>
-        const SUPABASE_URL = 'https://hhsonthokjwhpcgbpnru.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhoc29udGhva2p3aHBjZ2JwbnJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTUwNjQsImV4cCI6MjA5MTgzMTA2NH0.bf96o-eDXFSrOeHqTmnNSQZqDIDG7cjq1zciX7PNDQc';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        
-        let currentMood = 'gold';
-        const moodColors = { gold: '#ffb347', pink: '#ff85a1', blue: '#70a1ff' };
-        let editingId = null;
-        let selectedFile = null;
-        let globalDiaries = [];
+    <script>
+        const SUPABASE_URL = 'https://hhsonthokjwhpcgbpnru.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhoc29udGhva2p3aHBjZ2JwbnJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTUwNjQsImV4cCI6MjA5MTgzMTA2NH0.bf96o-eDXFSrOeHqTmnNSQZqDIDG7cjq1zciX7PNDQc';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        let currentMood = 'gold';
+        const moodColors = { gold: '#ffb347', pink: '#ff85a1', blue: '#70a1ff' };
+        let editingId = null;
+        let selectedFile = null;
+        let globalDiaries = [];
 
-        fetchDiaries();
+        fetchDiaries();
 
-        function handleFile(input) {
-            const file = input.files[0];
-            if (file) {
-                selectedFile = file;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const preview = document.getElementById('imagePreview');
-                    preview.src = e.target.result; preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        }
+        function handleFile(input) {
+            const file = input.files[0];
+            if (file) {
+                selectedFile = file;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = e.target.result; preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
 
-        function toggleTimeInput(cb) { document.getElementById('capsuleTime').style.display = cb.checked ? 'block' : 'none'; }
+        function toggleTimeInput(cb) { document.getElementById('capsuleTime').style.display = cb.checked ? 'block' : 'none'; }
 
-        function validatePass(val) {
-            const btn = document.getElementById('enterBtn');
-            if (val === '邱天' || val === '1314') { btn.classList.add('visible'); fetchDiaries(); } 
-            else { btn.classList.remove('visible'); }
-        }
+        function validatePass(val) {
+            const btn = document.getElementById('enterBtn');
+            if (val === '邱天' || val === '1314') { btn.classList.add('visible'); fetchDiaries(); } 
+            else { btn.classList.remove('visible'); }
+        }
 
-        function grantAccess() {
-            const music = document.getElementById('bgMusic');
-            const toggle = document.getElementById('musicToggle');
-            music.muted = false; music.volume = 1.0;
-            music.play().then(() => toggle.classList.add('playing')).catch(e => console.log("需交互"));
-            document.getElementById('passcodeOverlay').style.opacity = '0';
-            setTimeout(() => { document.getElementById('passcodeOverlay').style.display = 'none'; startSite(); }, 800);
-        }
+        function grantAccess() {
+            const music = document.getElementById('bgMusic');
+            const toggle = document.getElementById('musicToggle');
+            music.muted = false; music.volume = 1.0;
+            music.play().then(() => toggle.classList.add('playing')).catch(e => console.log("Init"));
+            document.getElementById('passcodeOverlay').style.opacity = '0';
+            setTimeout(() => { document.getElementById('passcodeOverlay').style.display = 'none'; startSite(); }, 800);
+        }
 
-        function toggleMusic() {
-            const music = document.getElementById('bgMusic');
-            const btn = document.getElementById('musicToggle');
-            music.muted = false;
-            if (music.paused) { music.play().then(() => btn.classList.add('playing')); } 
-            else { music.pause(); btn.classList.remove('playing'); }
-        }
+        function toggleMusic() {
+            const music = document.getElementById('bgMusic');
+            const btn = document.getElementById('musicToggle');
+            music.muted = false;
+            if (music.paused) { music.play().then(() => btn.classList.add('playing')); } 
+            else { music.pause(); btn.classList.remove('playing'); }
+        }
 
-        async function fetchDiaries() {
-            const { data } = await supabaseClient.from('ForestLog').select('*').order('created_at', { ascending: false });
-            if (data) { 
-                globalDiaries = data; 
-                renderDiaries(data); 
-            }
-        }
+        async function fetchDiaries() {
+            try {
+                const { data } = await supabaseClient.from('ForestLog').select('*').order('created_at', { ascending: false });
+                if (data) { globalDiaries = data; renderDiaries(data); }
+            } catch (e) { alert("获取数据失败，请检查数据库列设置"); }
+        }
 
-        function renderDiaries(data) {
-            const list = document.getElementById('diary-list');
-            if (!list) return;
-            const now = new Date();
-            
-            list.innerHTML = data.map(item => {
-                const unlockAt = item.unlock_at ? new Date(item.unlock_at) : new Date(new Date(item.created_at).getTime() + 86400000);
-                const isLocked = item.is_capsule && now < unlockAt;
-                let timeTip = '';
-                if (isLocked) {
-                    const diff = unlockAt - now;
-                    const h = Math.floor(diff / 3600000); const m = Math.floor((diff % 3600000) / 60000);
-                    timeTip = ` (⏳ ${h}时${m}分后开启)`;
-                }
-                
-                const imgHtml = (!isLocked && item.image_url) ? `<img src="${item.image_url}" class="diary-image" onclick="window.open(this.src)">` : '';
-                
-                const replies = item.replies || [];
-                let repliesHtml = '';
-                if (replies.length > 0) {
-                    repliesHtml = `<div class="replies-section">` + replies.map(r => `
-                        <div class="reply-item"><span class="reply-name">${r.name}:</span>${r.text}</div>
-                    `).join('') + `</div>`;
-                }
+        function renderDiaries(data) {
+            const list = document.getElementById('diary-list');
+            if (!list) return;
+            const now = new Date();
+            list.innerHTML = data.map(item => {
+                const unlockAt = item.unlock_at ? new Date(item.unlock_at) : new Date(new Date(item.created_at).getTime() + 86400000);
+                const isLocked = item.is_capsule && now < unlockAt;
+                let timeTip = '';
+                if (isLocked) {
+                    const diff = unlockAt - now;
+                    const h = Math.floor(diff / 3600000); const m = Math.floor((diff % 3600000) / 60000);
+                    timeTip = ` (⏳ ${h}时${m}分后开启)`;
+                }
+                const imgHtml = (!isLocked && item.image_url) ? `<img src="${item.image_url}" class="diary-image" onclick="window.open(this.src)">` : '';
+                const replies = item.replies || [];
+                let repliesHtml = '';
+                if (replies.length > 0) {
+                    repliesHtml = `<div class="replies-section">` + replies.map(r => `
+                        <div class="reply-item"><span class="reply-name">${r.name}:</span>${r.text}</div>
+                    `).join('') + `</div>`;
+                }
 
-                return `
-                <div class="diary-item" style="border-left-color: ${moodColors[item.mood] || moodColors.gold} !important;">
-                    <div class="diary-header">
-                        <div style="font-size:0.75rem; color:#8da399"><span style="color:#ffb347; font-weight:bold; margin-right:8px;">${item.author || '匿名'}</span>${new Date(item.created_at).toLocaleString()}</div>
-                        <div class="actions">
-                            <button type="button" class="action-btn" title="回复" onclick="toggleReplyBox('${item.id}')">💬</button>
-                            <button type="button" class="action-btn" title="编辑" onclick="startEdit('${item.id}')">✎</button>
-                            <button type="button" class="action-btn" title="删除" onclick="deleteEntry('${item.id}')">✕</button>
-                        </div>
-                    </div>
-                    <div class="diary-text" style="${isLocked ? 'color:#555; font-style:italic;' : ''}">${isLocked ? `时光胶囊传送中...${timeTip}` : item.content}</div>
-                    ${imgHtml}
-                    ${repliesHtml}
-                    <div class="reply-input-box" id="reply-box-${item.id}">
-                        <input type="text" class="reply-field" id="reply-input-${item.id}" placeholder="写下回复...">
-                        <button type="button" onclick="submitReply('${item.id}')" style="background:var(--autumn-gold); border:none; border-radius:12px; padding:4px 12px; font-size:0.75rem; cursor:pointer; font-weight:bold;">发送</button>
-                    </div>
-                </div>`;
-            }).join('');
-        }
+                return `
+                <div class="diary-item" style="border-left-color: ${moodColors[item.mood] || moodColors.gold} !important;">
+                    <div class="diary-header">
+                        <div style="font-size:0.75rem; color:#8da399"><span style="color:#ffb347; font-weight:bold; margin-right:8px;">${item.author || '匿名'}</span>${new Date(item.created_at).toLocaleString()}</div>
+                        <div class="actions">
+                            <button class="action-btn" onclick="toggleReplyBox('${item.id}')">💬</button>
+                            <button class="action-btn" onclick="startEdit('${item.id}')">✎</button>
+                            <button class="action-btn" onclick="deleteEntry('${item.id}')">✕</button>
+                        </div>
+                    </div>
+                    <div class="diary-text" style="${isLocked ? 'color:#555; font-style:italic;' : ''}">${isLocked ? `时光胶囊传送中...${timeTip}` : item.content}</div>
+                    ${imgHtml}
+                    ${repliesHtml}
+                    <div class="reply-input-box" id="reply-box-${item.id}">
+                        <input type="text" class="reply-field" id="reply-input-${item.id}" placeholder="回复...">
+                        <button onclick="submitReply('${item.id}')" style="background:var(--autumn-gold); border:none; border-radius:12px; padding:4px 10px; font-size:0.75rem; cursor:pointer;">发送</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
 
-        function toggleReplyBox(id) {
-            const box = document.getElementById(`reply-box-${id}`);
-            if (box) box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
-        }
+        function toggleReplyBox(id) {
+            const box = document.getElementById(`reply-box-${id}`);
+            if (box) box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
+        }
 
-        async function submitReply(id) {
-            const input = document.getElementById(`reply-input-${id}`);
-            const text = input.value.trim();
-            const name = document.getElementById('authorName').value || '匿名';
-            if (!text) return;
+        async function submitReply(id) {
+            const input = document.getElementById(`reply-input-${id}`);
+            const text = input.value.trim();
+            const name = document.getElementById('authorName').value || '匿名';
+            if (!text) return;
+            const item = globalDiaries.find(d => d.id === id);
+            const newReplies = [...(item.replies || []), { name, text, time: new Date() }];
+            const { error } = await supabaseClient.from('ForestLog').update({ replies: newReplies }).eq('id', id);
+            if (error) alert("回复失败，请确保数据库有 replies 列且类型为 jsonb");
+            else { input.value = ''; toggleReplyBox(id); fetchDiaries(); }
+        }
 
-            const item = globalDiaries.find(d => d.id === id);
-            const newReplies = [...(item.replies || []), { name, text, time: new Date() }];
+        async function publishEntry() {
+            const content = document.getElementById('diaryInput').value.trim();
+            const author = document.getElementById('authorName').value || '匿名';
+            const isCapsule = document.getElementById('capsuleCheck').checked;
+            const unlockAt = document.getElementById('capsuleTime').value;
+            const publishBtn = document.getElementById('publishBtn');
+            if (!content && !selectedFile) return;
+            publishBtn.innerText = '发送中...'; publishBtn.disabled = true;
+            try {
+                let imageUrl = null;
+                if (selectedFile) {
+                    const fileExt = selectedFile.name.split('.').pop();
+                    const fileName = `${Date.now()}.${fileExt}`;
+                    const { data: uploadData } = await supabaseClient.storage.from('forest-images').upload(fileName, selectedFile);
+                    if (uploadData) imageUrl = supabaseClient.storage.from('forest-images').getPublicUrl(fileName).data.publicUrl;
+                }
+                const payload = { content, author, mood: currentMood, is_capsule: isCapsule, image_url: imageUrl };
+                if (isCapsule && unlockAt) payload.unlock_at = new Date(unlockAt).toISOString();
+                if (editingId) { await supabaseClient.from('ForestLog').update(payload).eq('id', editingId); editingId = null; } 
+                else await supabaseClient.from('ForestLog').insert([payload]);
+                document.getElementById('diaryInput').value = ''; document.getElementById('imagePreview').style.display = 'none';
+                document.getElementById('capsuleCheck').checked = false; document.getElementById('capsuleTime').style.display = 'none';
+                selectedFile = null; fetchDiaries();
+            } catch (err) { alert("发布失败，请检查后台设置"); }
+            finally { publishBtn.innerText = '发布日志'; publishBtn.disabled = false; }
+        }
 
-            await supabaseClient.from('ForestLog').update({ replies: newReplies }).eq('id', id);
-            input.value = '';
-            toggleReplyBox(id);
-            fetchDiaries();
-        }
+        function startEdit(id) {
+            const item = globalDiaries.find(d => d.id === id);
+            if (!item) return;
+            editingId = id; document.getElementById('diaryInput').value = item.content;
+            document.getElementById('authorName').value = item.author || '';
+            document.getElementById('publishBtn').innerText = '保存修改'; window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-        async function publishEntry() {
-            const content = document.getElementById('diaryInput').value.trim();
-            const author = document.getElementById('authorName').value || '匿名';
-            const isCapsule = document.getElementById('capsuleCheck').checked;
-            const unlockAt = document.getElementById('capsuleTime').value;
-            const publishBtn = document.getElementById('publishBtn');
+        async function deleteEntry(id) { await supabaseClient.from('ForestLog').delete().eq('id', id); fetchDiaries(); }
 
-            if (!content && !selectedFile) return;
-            
-            publishBtn.innerText = '发送中...'; 
-            publishBtn.disabled = true;
+        function setMood(mood, btn) {
+            currentMood = mood; document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
 
-            try {
-                let imageUrl = null;
-                if (selectedFile) {
-                    const fileExt = selectedFile.name.split('.').pop();
-                    const fileName = `${Date.now()}.${fileExt}`;
-                    
-                    // 防爆处理：如果这里出错，会直接被 catch 捕获并弹窗报警
-                    const { data: uploadData, error: uploadError } = await supabaseClient.storage.from('forest-images').upload(fileName, selectedFile);
-                    
-                    if (uploadError) {
-                        throw new Error("图片上传失败。请检查 Supabase 存储桶是否命名为 forest-images 并设为了 Public。详细错误：" + uploadError.message);
-                    }
-                    if (uploadData) { 
-                        imageUrl = supabaseClient.storage.from('forest-images').getPublicUrl(fileName).data.publicUrl; 
-                    }
-                }
+        function createHeart() {
+            const container = document.getElementById('heart-container');
+            if (!container) return;
+            const heart = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            heart.setAttribute("viewBox", "0 0 24 24"); heart.setAttribute("class", "heart");
+            const size = Math.random() * 15 + 25; heart.style.width = size + "px"; heart.style.left = Math.random() * 100 + "vw";
+            heart.style.animationDuration = (Math.random() * 4 + 6) + "s"; heart.style.fill = moodColors[currentMood];
+            heart.innerHTML = `<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>`;
+            container.appendChild(heart); setTimeout(() => heart.remove(), 10000);
+        }
 
-                const payload = { content, author, mood: currentMood, is_capsule: isCapsule };
-                if (imageUrl) payload.image_url = imageUrl;
-                if (isCapsule && unlockAt) { payload.unlock_at = new Date(unlockAt).toISOString(); }
-
-                if (editingId) { 
-                    await supabaseClient.from('ForestLog').update(payload).eq('id', editingId); 
-                    editingId = null; 
-                } else { 
-                    const { error: dbError } = await supabaseClient.from('ForestLog').insert([payload]);
-                    if (dbError) throw new Error("保存到数据库失败：" + dbError.message);
-                }
-
-                // 成功后重置
-                document.getElementById('diaryInput').value = ''; 
-                document.getElementById('imagePreview').style.display = 'none';
-                document.getElementById('capsuleCheck').checked = false; 
-                document.getElementById('capsuleTime').style.display = 'none';
-                document.getElementById('fileInput').value = ''; 
-                selectedFile = null; 
-                fetchDiaries();
-
-            } catch (err) {
-                // 遇到错误直接弹窗报警，不再白屏死机！
-                alert(err.message);
-            } finally {
-                publishBtn.innerText = '发布日志'; 
-                publishBtn.disabled = false; 
-            }
-        }
-
-        function startEdit(id) {
-            const item = globalDiaries.find(d => d.id === id);
-            if (!item) return;
-            editingId = id; 
-            document.getElementById('diaryInput').value = item.content;
-            document.getElementById('authorName').value = item.author || '';
-            document.getElementById('publishBtn').innerText = '保存修改'; 
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        async function deleteEntry(id) { await supabaseClient.from('ForestLog').delete().eq('id', id); fetchDiaries(); }
-
-        function setMood(mood, btn) {
-            currentMood = mood; document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        }
-
-        function createHeart() {
-            const container = document.getElementById('heart-container');
-            if (!container) return;
-            const heart = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            heart.setAttribute("viewBox", "0 0 24 24"); heart.setAttribute("class", "heart");
-            const size = Math.random() * 15 + 25; heart.style.width = size + "px"; heart.style.left = Math.random() * 100 + "vw";
-            heart.style.animationDuration = (Math.random() * 4 + 6) + "s"; heart.style.fill = moodColors[currentMood];
-            heart.innerHTML = `<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>`;
-            container.appendChild(heart); setTimeout(() => heart.remove(), 10000);
-        }
-
-        function startSite() { setInterval(createHeart, 400); supabaseClient.channel('any').on('postgres_changes', { event: '*', schema: 'public', table: 'ForestLog' }, fetchDiaries).subscribe(); }
-    </script>
+        function startSite() { setInterval(createHeart, 400); supabaseClient.channel('any').on('postgres_changes', { event: '*', schema: 'public', table: 'ForestLog' }, fetchDiaries).subscribe(); }
+    </script>
 </body>
 </html>
