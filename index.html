@@ -24,14 +24,17 @@
             min-height: 100vh; padding: 0 20px; overflow-x: hidden;
         }
 
-        #musicToggle { position: fixed; top: 20px; right: 20px; z-index: 1100; cursor: pointer; font-size: 1.6rem; }
+        /* 音乐按钮 */
+        #musicToggle { position: fixed; top: 20px; right: 20px; z-index: 1100; cursor: pointer; font-size: 1.6rem; transition: 0.3s; }
         #musicToggle.playing { animation: pulse 2s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
+        /* 暗号遮罩 */
         #passcodeOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--forest-bg); z-index: 2000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.8s; }
         #enterBtn { margin-top: 25px; padding: 10px 40px; background: var(--autumn-gold); border: none; color: #1c2b23; border-radius: 25px; cursor: pointer; font-weight: bold; opacity: 0; transform: translateY(10px); pointer-events: none; transition: 0.3s; }
         #enterBtn.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
+        /* 爱心动画 */
         #heart-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
         .heart { position: absolute; filter: drop-shadow(0 0 8px rgba(255,179,71,0.4)); animation: fall linear infinite; top: -50px; }
         @keyframes fall { 0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; } 10% { opacity: 0.8; } 100% { transform: translateY(110vh) rotate(360deg) scale(1.2); opacity: 0; } }
@@ -40,6 +43,7 @@
         .forest-text { font-size: 1.4rem; color: var(--forest-dark); font-weight: bold; margin-bottom: 8px; }
         .autumn-text { font-size: 1.8rem; color: var(--autumn-gold); font-weight: bold; }
 
+        /* 输入区 */
         .input-section { width: 100%; max-width: 500px; background: var(--card-bg); padding: 12px 15px; border-radius: 18px; margin-bottom: 20px; border: 1px solid var(--card-border); z-index: 1; backdrop-filter: blur(10px); box-sizing: border-box; }
         textarea { width: 100%; background: transparent; border: none; color: white; font-size: 1.1rem; resize: none; outline: none; height: 50px; box-sizing: border-box; }
         
@@ -49,29 +53,17 @@
         .mood-btn { width: 16px; height: 16px; border-radius: 50%; cursor: pointer; border: 1.5px solid transparent; }
         .mood-btn.active { border-color: white; transform: scale(1.2); box-shadow: 0 0 5px white; }
 
+        /* 控制区：强制对齐 */
         .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; flex-wrap: wrap; gap: 8px; }
         .author-input { background: rgba(255,255,255,0.08); border: 1px solid #444; color: #eee; border-radius: 10px; padding: 4px 10px; width: 70px; font-size: 0.85rem; }
         
-        /* 强制水平对齐容器 */
         .control-right { display: flex; align-items: center; gap: 12px; }
-        
-        /* 相机按钮精准上移 */
-        .photo-btn { 
-            font-size: 1.4rem; 
-            cursor: pointer; 
-            opacity: 0.9; 
-            display: inline-flex;
-            align-items: center;
-            margin-top: -6px; /* 继续向上微调 */
-            transition: 0.2s;
-        }
-        .photo-btn:hover { transform: scale(1.1); }
-        
+        .photo-btn { font-size: 1.4rem; cursor: pointer; opacity: 0.9; display: inline-flex; align-items: center; margin-top: -6px; }
         .capsule-label { font-size: 0.8rem; color: #8da399; cursor: pointer; display: flex; align-items: center; gap: 4px; }
         #capsuleTime { background: #fff !important; color: #000 !important; border-radius: 6px; padding: 2px 6px; font-size: 0.75rem; display: none; }
-        
         button#publishBtn { background: var(--autumn-gold); border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-weight: bold; color: #1c2b23; }
 
+        /* 日志项样式 */
         #diary-list { width: 100%; max-width: 500px; z-index: 1; padding-bottom: 50px; box-sizing: border-box; }
         .diary-item { 
             background: var(--card-bg); padding: 10px 15px !important; border-radius: 12px; margin-bottom: 12px; 
@@ -80,28 +72,33 @@
         }
         .diary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
         .diary-text { text-align: left !important; line-height: 1.4; white-space: pre-wrap; font-size: 0.95rem; word-break: break-word; color: white; margin: 0; padding: 0; }
-        
-        /* 发布的图片样式 */
         .diary-image { width: 100%; max-width: 300px; border-radius: 8px; margin-top: 10px; cursor: pointer; display: block; border: 1px solid rgba(255,255,255,0.1); }
 
-        /* 回复区域精修 */
+        /* 回复区域 */
         .replies-section { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); }
-        .reply-item { 
-            font-size: 0.85rem; color: #8da399; margin-bottom: 4px; padding: 2px 8px; 
-            border-left: 2px solid rgba(255,179,71,0.3); display: flex; justify-content: space-between; align-items: center;
-        }
+        .reply-item { font-size: 0.85rem; color: #8da399; margin-bottom: 4px; padding: 2px 8px; border-left: 2px solid rgba(255,179,71,0.3); display: flex; justify-content: space-between; align-items: center; }
         .reply-content { flex: 1; }
         .reply-name { color: var(--autumn-gold); font-weight: bold; margin-right: 5px; }
-        
-        /* 留言删除按钮：红色的✕ */
-        .del-reply-btn { background: none; border: none; color: #ff5e5e; cursor: pointer; opacity: 0.5; font-size: 0.8rem; padding: 0 4px; transition: 0.2s; }
-        .del-reply-btn:hover { opacity: 1; transform: scale(1.2); }
-
-        .reply-input-box { display: none; margin-top: 8px; gap: 8px; align-items: center; }
-        .reply-field { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid #444; color: white; border-radius: 12px; padding: 6px 10px; font-size: 0.85rem; outline: none; }
+        .del-reply-btn { background: none; border: none; color: #ff5e5e; cursor: pointer; opacity: 0.5; font-size: 0.8rem; padding: 0 4px; }
 
         .actions { display: flex; gap: 10px; align-items: center; }
         .action-btn { background: none; border: none; color: var(--forest-text); cursor: pointer; opacity: 0.6; font-size: 0.95rem; }
+
+        /* 🟢 自定义删除确认弹窗 */
+        #customConfirm {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center;
+            z-index: 3000; backdrop-filter: blur(4px);
+        }
+        .confirm-box {
+            background: var(--forest-bg); border: 1px solid var(--autumn-gold);
+            padding: 20px; border-radius: 15px; text-align: center; width: 260px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .confirm-btns { display: flex; gap: 10px; margin-top: 20px; justify-content: center; }
+        .confirm-btn { padding: 6px 20px; border-radius: 15px; border: none; cursor: pointer; font-weight: bold; }
+        .btn-yes { background: var(--autumn-gold); color: #1c2b23; }
+        .btn-no { background: rgba(255,255,255,0.1); color: white; }
 
         @media (max-width: 600px) { header { margin-top: 80px; } .input-section, #diary-list { width: 92%; } }
     </style>
@@ -115,6 +112,16 @@
         <p style="color: #8da399; margin-bottom: 15px;">输入暗号进入林间</p>
         <input type="password" id="passInput" placeholder="请输入..." style="background:transparent; border:none; border-bottom:1px solid #ffb347; color:white; text-align:center; outline:none; font-size:1.2rem;" oninput="validatePass(this.value)">
         <button id="enterBtn" onclick="grantAccess()">开启森林</button>
+    </div>
+
+    <div id="customConfirm">
+        <div class="confirm-box">
+            <p id="confirmMsg" style="margin: 0; font-size: 0.95rem;">确定要删除吗？</p>
+            <div class="confirm-btns">
+                <button class="confirm-btn btn-no" onclick="closeConfirm()">取消</button>
+                <button id="confirmYes" class="confirm-btn btn-yes">确定</button>
+            </div>
+        </div>
     </div>
 
     <div id="heart-container"></div>
@@ -137,7 +144,6 @@
             <div class="control-right">
                 <label for="fileInput" class="photo-btn" title="上传图片">📷</label>
                 <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(this)">
-                
                 <label class="capsule-label"><input type="checkbox" id="capsuleCheck" onchange="toggleTimeInput(this)"> 胶囊</label>
                 <input type="datetime-local" id="capsuleTime">
                 <button id="publishBtn" onclick="publishEntry()">发布日志</button>
@@ -185,7 +191,7 @@
             const music = document.getElementById('bgMusic');
             const toggle = document.getElementById('musicToggle');
             music.muted = false; music.volume = 1.0;
-            music.play().then(() => toggle.classList.add('playing')).catch(e => console.log("Init"));
+            music.play().then(() => toggle.classList.add('playing')).catch(e => console.log("Waiting interaction"));
             document.getElementById('passcodeOverlay').style.opacity = '0';
             setTimeout(() => { document.getElementById('passcodeOverlay').style.display = 'none'; startSite(); }, 800);
         }
@@ -207,7 +213,6 @@
             const list = document.getElementById('diary-list');
             if (!list) return;
             const now = new Date();
-            
             list.innerHTML = data.map(item => {
                 const unlockAt = item.unlock_at ? new Date(item.unlock_at) : new Date(new Date(item.created_at).getTime() + 86400000);
                 const isLocked = item.is_capsule && now < unlockAt;
@@ -217,16 +222,14 @@
                     const h = Math.floor(diff / 3600000); const m = Math.floor((diff % 3600000) / 60000);
                     timeTip = ` (⏳ ${h}时${m}分后开启)`;
                 }
-                
                 const imgHtml = (!isLocked && item.image_url) ? `<img src="${item.image_url}" class="diary-image" onclick="window.open(this.src)">` : '';
-                
                 const replies = item.replies || [];
                 let repliesHtml = '';
                 if (replies.length > 0) {
                     repliesHtml = `<div class="replies-section">` + replies.map((r, index) => `
                         <div class="reply-item">
                             <div class="reply-content"><span class="reply-name">${r.name}:</span>${r.text}</div>
-                            <button class="del-reply-btn" onclick="deleteReply('${item.id}', ${index})">✕</button>
+                            <button class="del-reply-btn" onclick="openConfirm('确定删除留言吗？', () => deleteReply('${item.id}', ${index}))">✕</button>
                         </div>
                     `).join('') + `</div>`;
                 }
@@ -236,9 +239,9 @@
                     <div class="diary-header">
                         <div style="font-size:0.75rem; color:#8da399"><span style="color:#ffb347; font-weight:bold; margin-right:8px;">${item.author || '匿名'}</span>${new Date(item.created_at).toLocaleString()}</div>
                         <div class="actions">
-                            <button class="action-btn" title="回复" onclick="toggleReplyBox('${item.id}')">💬</button>
-                            <button class="action-btn" title="编辑" onclick="startEdit('${item.id}')">✎</button>
-                            <button class="action-btn" title="删除" onclick="deleteEntry('${item.id}')">✕</button>
+                            <button type="button" class="action-btn" title="回复" onclick="toggleReplyBox('${item.id}')">💬</button>
+                            <button type="button" class="action-btn" title="编辑" onclick="startEdit('${item.id}')">✎</button>
+                            <button type="button" class="action-btn" title="删除" onclick="openConfirm('确定要删除日志吗？', () => deleteEntry('${item.id}'))">✕</button>
                         </div>
                     </div>
                     <div class="diary-text" style="${isLocked ? 'color:#555; font-style:italic;' : ''}">${isLocked ? `时光胶囊传送中...${timeTip}` : item.content}</div>
@@ -252,8 +255,18 @@
             }).join('');
         }
 
+        // 🟢 弹窗控制逻辑
+        function openConfirm(msg, callback) {
+            document.getElementById('confirmMsg').innerText = msg;
+            document.getElementById('customConfirm').style.display = 'flex';
+            document.getElementById('confirmYes').onclick = () => {
+                callback();
+                closeConfirm();
+            };
+        }
+        function closeConfirm() { document.getElementById('customConfirm').style.display = 'none'; }
+
         async function deleteReply(id, index) {
-            if (!confirm("确定删除这条留言吗？")) return;
             const item = globalDiaries.find(d => d.id === id);
             const newReplies = [...item.replies];
             newReplies.splice(index, 1);
@@ -268,18 +281,13 @@
 
         async function submitReply(id) {
             const input = document.getElementById(`reply-input-${id}`);
-            const btn = document.getElementById(`replyBtn-${id}`);
             const text = input.value.trim();
             const name = document.getElementById('authorName').value || '匿名';
             if (!text) return;
-            btn.innerText = "..."; btn.disabled = true;
-            try {
-                const { data: latestItem } = await supabaseClient.from('ForestLog').select('replies').eq('id', id).single();
-                const newReplies = [...(latestItem.replies || []), { name, text, time: new Date() }];
-                await supabaseClient.from('ForestLog').update({ replies: newReplies }).eq('id', id);
-                input.value = ''; toggleReplyBox(id); fetchDiaries();
-            } catch (err) { alert("回复失败，请确认后台设置"); }
-            finally { btn.innerText = "发送"; btn.disabled = false; }
+            const { data: latestItem } = await supabaseClient.from('ForestLog').select('replies').eq('id', id).single();
+            const newReplies = [...(latestItem.replies || []), { name, text, time: new Date() }];
+            await supabaseClient.from('ForestLog').update({ replies: newReplies }).eq('id', id);
+            input.value = ''; toggleReplyBox(id); fetchDiaries();
         }
 
         async function publishEntry() {
@@ -297,15 +305,13 @@
                 if (selectedFile) {
                     const fileExt = selectedFile.name.split('.').pop();
                     const fileName = `${Date.now()}.${fileExt}`;
-                    const { data: uploadData, error: uploadError } = await supabaseClient.storage.from('forest-images').upload(fileName, selectedFile);
-                    if (uploadError) throw uploadError;
-                    const { data: urlData } = supabaseClient.storage.from('forest-images').getPublicUrl(fileName);
-                    imageUrl = urlData.publicUrl;
+                    const { data: uploadData } = await supabaseClient.storage.from('forest-images').upload(fileName, selectedFile);
+                    if (uploadData) imageUrl = supabaseClient.storage.from('forest-images').getPublicUrl(fileName).data.publicUrl;
                 }
-
                 const payload = { content, author, mood: currentMood, is_capsule: isCapsule, image_url: imageUrl };
                 if (isCapsule && unlockAt) payload.unlock_at = new Date(unlockAt).toISOString();
-                if (editingId) { await supabaseClient.from('ForestLog').update(payload).eq('id', editingId); editingId = null; } 
+                
+                if (editingId) { await supabaseClient.from('ForestLog').update(payload).eq('id', editingId); editingId = null; publishBtn.innerText = '发布日志'; } 
                 else { await supabaseClient.from('ForestLog').insert([payload]); }
 
                 document.getElementById('diaryInput').value = ''; document.getElementById('imagePreview').style.display = 'none';
@@ -313,18 +319,21 @@
                 document.getElementById('fileInput').value = ''; selectedFile = null;
                 fetchDiaries();
             } catch (err) { alert("发布失败: " + err.message); }
-            finally { publishBtn.innerText = '发布日志'; publishBtn.disabled = false; }
+            finally { publishBtn.disabled = false; }
         }
 
+        // 🔴 修复编辑逻辑
         function startEdit(id) {
             const item = globalDiaries.find(d => d.id === id);
             if (!item) return;
-            editingId = id; document.getElementById('diaryInput').value = item.content;
+            editingId = id; 
+            document.getElementById('diaryInput').value = item.content;
             document.getElementById('authorName').value = item.author || '';
-            document.getElementById('publishBtn').innerText = '保存修改'; window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('publishBtn').innerText = '保存修改'; 
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        async function deleteEntry(id) { if(confirm("确定删除这篇日志吗？")) { await supabaseClient.from('ForestLog').delete().eq('id', id); fetchDiaries(); } }
+        async function deleteEntry(id) { await supabaseClient.from('ForestLog').delete().eq('id', id); fetchDiaries(); }
 
         function setMood(mood, btn) {
             currentMood = mood; document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
