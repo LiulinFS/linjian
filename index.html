@@ -1,373 +1,303 @@
-<!DOCTYPE html>
-<html lang="zh">
+<!DOCTYPE html>
+<html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>林间的邱天</title>
-    <script src="[https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2](https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2)"></script>
-    <style>
-        :root {
-            --forest-bg: #1c2b23;
-            --forest-dark: #8ED973; 
-            --forest-text: #8da399;
-            --autumn-gold: #ffb347;
-            --love-pink: #ff85a1;
-            --tired-blue: #70a1ff;
-            --card-bg: rgba(255, 255, 255, 0.1); 
-            --card-border: rgba(255, 255, 255, 0.1);
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>林间的邱天</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --forest-bg: #1c2b23;
+            --forest-dark: #8ED973; 
+            --forest-text: #8da399;
+            --autumn-gold: #ffb347;
+            --love-pink: #ff85a1;
+            --tired-blue: #70a1ff;
+            --card-bg: rgba(255, 255, 255, 0.1); 
+            --card-border: rgba(255, 255, 255, 0.1);
+        }
 
-        body {
-            margin: 0; background-color: var(--forest-bg); color: white;
-            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-            display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; padding: 0 20px; overflow-x: hidden;
-        }
+        body {
+            margin: 0; background-color: var(--forest-bg); color: white;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; padding: 0 20px; overflow-x: hidden;
+        }
 
-        #musicToggle {
-            position: fixed; top: 20px; right: 20px; z-index: 1100;
-            cursor: pointer; font-size: 1.6rem; opacity: 0.8; transition: 0.3s;
-        }
-        #musicToggle.playing { animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+        #musicToggle {
+            position: fixed; top: 20px; right: 20px; z-index: 1100;
+            cursor: pointer; font-size: 1.6rem; opacity: 0.8; transition: 0.3s;
+        }
+        #musicToggle.playing { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
-        #passcodeOverlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: var(--forest-bg); z-index: 2000; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            transition: 0.8s; 
-        }
-        
-        #enterBtn {
-            margin-top: 25px; padding: 10px 40px; 
-            background: var(--autumn-gold); border: none; color: #1c2b23; 
-            border-radius: 25px; cursor: pointer; font-size: 1rem; font-weight: bold;
-            opacity: 0; transform: translateY(10px); pointer-events: none; transition: 0.3s;
-        }
-        #enterBtn.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        #passcodeOverlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: var(--forest-bg); z-index: 2000; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            transition: 0.8s; 
+        }
+        
+        #enterBtn {
+            margin-top: 25px; padding: 10px 40px; 
+            background: var(--autumn-gold); border: none; color: #1c2b23; 
+            border-radius: 25px; cursor: pointer; font-size: 1rem; font-weight: bold;
+            opacity: 0; transform: translateY(10px); pointer-events: none; transition: 0.3s;
+        }
+        #enterBtn.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
-        #heart-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-        .heart { position: absolute; filter: drop-shadow(0 0 8px rgba(255,179,71,0.4)); animation: fall linear infinite; top: -50px; }
-        @keyframes fall {
-            0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
-            10% { opacity: 0.8; }
-            100% { transform: translateY(110vh) rotate(360deg) scale(1.2); opacity: 0; }
-        }
+        #heart-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .heart { position: absolute; filter: drop-shadow(0 0 8px rgba(255,179,71,0.4)); animation: fall linear infinite; top: -50px; }
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
+            10% { opacity: 0.8; }
+            100% { transform: translateY(110vh) rotate(360deg) scale(1.2); opacity: 0; }
+        }
 
-        header { text-align: center; margin-top: 100px; margin-bottom: 30px; z-index: 1; }
-        .forest-text { font-size: 1.6rem; color: var(--forest-dark); font-weight: bold; margin-bottom: 12px; }
-        .autumn-text { font-size: 2.3rem; color: var(--autumn-gold); font-weight: bold; }
+        header { text-align: center; margin-top: 100px; margin-bottom: 30px; z-index: 1; }
+        .forest-text { font-size: 1.6rem; color: var(--forest-dark); font-weight: bold; margin-bottom: 12px; }
+        .autumn-text { font-size: 2.3rem; color: var(--autumn-gold); font-weight: bold; }
 
-        .input-section {
-            width: 100%; max-width: 500px; background: var(--card-bg);
-            padding: 15px; border-radius: 18px; margin-bottom: 25px;
-            border: 1px solid var(--card-border); z-index: 1; backdrop-filter: blur(10px); box-sizing: border-box;
-        }
-        
-        #imagePreview { 
-            width: 60px; height: 60px; object-fit: cover; border-radius: 8px; 
-            display: none; margin-bottom: 10px; border: 1px solid var(--autumn-gold); 
-        }
+        .input-section {
+            width: 100%; max-width: 500px; background: var(--card-bg);
+            padding: 15px; border-radius: 18px; margin-bottom: 25px;
+            border: 1px solid var(--card-border); z-index: 1; backdrop-filter: blur(10px); box-sizing: border-box;
+        }
+        textarea { width: 100%; background: transparent; border: none; color: white; font-size: 1.1rem; resize: none; outline: none; height: 60px; box-sizing: border-box; }
+        
+        .mood-selector { display: flex; gap: 12px; margin: 10px 0; }
+        .mood-btn { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 1.5px solid transparent; transition: 0.3s; }
+        .mood-btn.active { border-color: white; transform: scale(1.2); box-shadow: 0 0 8px white; }
 
-        textarea { width: 100%; background: transparent; border: none; color: white; font-size: 1.1rem; resize: none; outline: none; height: 60px; box-sizing: border-box; }
-        
-        .mood-selector { display: flex; gap: 12px; margin: 10px 0; }
-        .mood-btn { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 1.5px solid transparent; transition: 0.3s; }
-        .mood-btn.active { border-color: white; transform: scale(1.2); box-shadow: 0 0 8px white; }
+        .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; flex-wrap: wrap; gap: 10px; }
+        .author-input { background: rgba(255,255,255,0.08); border: 1px solid #444; color: #eee; border-radius: 10px; padding: 6px 10px; width: 80px; font-size: 0.9rem; }
+        
+        #capsuleTime { 
+            background: #ffffff !important; color: #000000 !important; border: 2px solid var(--autumn-gold); 
+            border-radius: 8px; padding: 4px; font-size: 0.8rem; display: none; font-weight: bold;
+        }
+        
+        button#publishBtn { background: var(--autumn-gold); border: none; padding: 10px 22px; border-radius: 25px; cursor: pointer; font-weight: bold; color: #1c2b23; }
 
-        .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; flex-wrap: wrap; gap: 10px; }
-        .author-input { background: rgba(255,255,255,0.08); border: 1px solid #444; color: #eee; border-radius: 10px; padding: 6px 10px; width: 80px; font-size: 0.9rem; }
-        
-        #capsuleTime { 
-            background: #ffffff !important; color: #000000 !important; border: 2px solid var(--autumn-gold); 
-            border-radius: 8px; padding: 4px; font-size: 0.8rem; display: none; font-weight: bold;
-        }
-        
-        .photo-btn { font-size: 1.2rem; cursor: pointer; opacity: 0.8; transition: 0.3s; }
-        .photo-btn:hover { opacity: 1; transform: scale(1.1); }
+        #diary-list { width: 100%; max-width: 500px; z-index: 1; padding-bottom: 50px; box-sizing: border-box; }
+        
+        .diary-item {
+            background: var(--card-bg); 
+            padding: 10px 15px; 
+            border-radius: 12px; 
+            margin-bottom: 12px; 
+            border: 1px solid var(--card-border);
+            border-left: 5px solid var(--autumn-gold) !important;
+            backdrop-filter: blur(5px);
+            position: relative;
+            width: 100%;
+            box-sizing: border-box;
+        }
 
-        button#publishBtn { background: var(--autumn-gold); border: none; padding: 10px 22px; border-radius: 25px; cursor: pointer; font-weight: bold; color: #1c2b23; }
+        .diary-header { 
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 6px; 
+        }
+        
+        /* 正文样式 */
+        .diary-text {
+            text-align: left !important;
+            line-height: 1.5; 
+            white-space: pre-wrap;
+            font-size: 1rem;
+            word-break: break-word;
+            margin: 0; padding: 0;
+            color: white;
+        }
 
-        #diary-list { width: 100%; max-width: 500px; z-index: 1; padding-bottom: 50px; box-sizing: border-box; }
-        
-        .diary-item {
-            background: var(--card-bg); 
-            padding: 10px 15px; 
-            border-radius: 12px; 
-            margin-bottom: 12px; 
-            border: 1px solid var(--card-border);
-            border-left: 5px solid var(--autumn-gold) !important;
-            backdrop-filter: blur(5px);
-            position: relative;
-            width: 100%;
-            box-sizing: border-box;
-            text-align: left !important;
-        }
+        .actions { display: flex; gap: 12px; align-items: center; }
+        .action-btn { background: none; border: none; color: var(--forest-text); cursor: pointer; opacity: 0.5; font-size: 1rem; }
 
-        .diary-header { 
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 6px; 
-            text-align: left;
-        }
-        
-        .diary-text {
-            text-align: left !important;
-            line-height: 1.5; 
-            white-space: pre-wrap;
-            font-size: 1rem;
-            word-break: break-word;
-            margin: 0; padding: 0;
-            color: white;
-            display: block;
-            width: 100%;
-        }
-
-        .diary-image { 
-            width: 100%; max-width: 300px; border-radius: 10px; 
-            margin-top: 8px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; 
-        }
-
-        .actions { display: flex; gap: 12px; align-items: center; }
-        .action-btn { background: none; border: none; color: var(--forest-text); cursor: pointer; opacity: 0.5; font-size: 1rem; }
-
-        @media (max-width: 600px) {
-            header { margin-top: 100px; } 
-            .input-section, #diary-list { width: 92%; padding: 15px; }
-        }
-    </style>
+        @media (max-width: 600px) {
+            header { margin-top: 100px; } 
+            .input-section, #diary-list { width: 92%; padding: 15px; }
+        }
+    </style>
 </head>
 <body>
 
-    <div id="musicToggle" onclick="toggleMusic()">🎵</div>
-    <audio id="bgMusic" loop preload="auto" muted><source src="./Love.mp3" type="audio/mpeg"></audio>
+    <div id="musicToggle" onclick="toggleMusic()">🎵</div>
+    <audio id="bgMusic" loop preload="auto" muted><source src="./Love.mp3" type="audio/mpeg"></audio>
 
-    <div id="passcodeOverlay">
-        <p style="color: #8da399; margin-bottom: 15px;">输入暗号进入林间</p>
-        <input type="password" id="passInput" placeholder="请输入..." style="background:transparent; border:none; border-bottom:1px solid #ffb347; color:white; text-align:center; outline:none; font-size:1.2rem;" oninput="validatePass(this.value)">
-        <button id="enterBtn" onclick="grantAccess()">开启森林</button>
-    </div>
+    <div id="passcodeOverlay">
+        <p style="color: #8da399; margin-bottom: 15px;">输入暗号进入林间</p >
+        <input type="password" id="passInput" placeholder="请输入..." style="background:transparent; border:none; border-bottom:1px solid #ffb347; color:white; text-align:center; outline:none; font-size:1.2rem;" oninput="validatePass(this.value)">
+        <button id="enterBtn" onclick="grantAccess()">开启森林</button>
+    </div>
 
-    <div id="heart-container"></div>
+    <div id="heart-container"></div>
 
-    <header>
-        <div class="forest-text">虽然森林很大 有时候容易迷路</div>
-        <div class="autumn-text">但秋天总会如约而至</div>
-    </header>
+    <header>
+        <div class="forest-text">虽然森林很大 有时候容易迷路</div>
+        <div class="autumn-text">但秋天总会如约而至</div>
+    </header>
 
-    <div class="input-section">
-        <img id="imagePreview">
-        <textarea id="diaryInput" placeholder="存入此时此刻..."></textarea>
-        <div class="mood-selector">
-            <div class="mood-btn active" onclick="setMood('gold', this)" style="background: var(--autumn-gold);"></div>
-            <div class="mood-btn" onclick="setMood('pink', this)" style="background: var(--love-pink);"></div>
-            <div class="mood-btn" onclick="setMood('blue', this)" style="background: var(--tired-blue);"></div>
-        </div>
-        <div class="controls">
-            <input type="text" id="authorName" class="author-input" value="" placeholder="名字">
-            <div style="display:flex; align-items:center; gap:8px;">
-                <label for="fileInput" class="photo-btn">📷</label>
-                <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(this)">
-                
-                <label style="font-size:0.8rem; color:#8da399; cursor:pointer;">
-                    <input type="checkbox" id="capsuleCheck" onchange="toggleTimeInput(this)"> 胶囊
-                </label>
-                <input type="datetime-local" id="capsuleTime">
-                <button id="publishBtn" onclick="publishEntry()">发布日志</button>
-            </div>
-        </div>
-    </div>
+    <div class="input-section">
+        <textarea id="diaryInput" placeholder="存入此时此刻..."></textarea>
+        <div class="mood-selector">
+            <div class="mood-btn active" onclick="setMood('gold', this)" style="background: var(--autumn-gold);"></div>
+            <div class="mood-btn" onclick="setMood('pink', this)" style="background: var(--love-pink);"></div>
+            <div class="mood-btn" onclick="setMood('blue', this)" style="background: var(--tired-blue);"></div>
+        </div>
+        <div class="controls">
+            <input type="text" id="authorName" class="author-input" value="" placeholder="名字">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <label style="font-size:0.8rem; color:#8da399; cursor:pointer;">
+                    <input type="checkbox" id="capsuleCheck" onchange="toggleTimeInput(this)"> 胶囊
+                </label>
+                <input type="datetime-local" id="capsuleTime">
+                <button id="publishBtn" onclick="publishEntry()">发布日志</button>
+            </div>
+        </div>
+    </div>
 
-    <div id="diary-list"></div>
+    <div id="diary-list"></div>
 
-    <script>
-        const SUPABASE_URL = '[https://hhsonthokjwhpcgbpnru.supabase.co](https://hhsonthokjwhpcgbpnru.supabase.co)';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhoc29udGhva2p3aHBjZ2JwbnJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTUwNjQsImV4cCI6MjA5MTgzMTA2NH0.bf96o-eDXFSrOeHqTmnNSQZqDIDG7cjq1zciX7PNDQc';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        
-        let currentMood = 'gold';
-        const moodColors = { gold: '#ffb347', pink: '#ff85a1', blue: '#70a1ff' };
-        let editingId = null;
-        let selectedFile = null;
+    <script>
+        const SUPABASE_URL = 'https://hhsonthokjwhpcgbpnru.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhoc29udGhva2p3aHBjZ2JwbnJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTUwNjQsImV4cCI6MjA5MTgzMTA2NH0.bf96o-eDXFSrOeHqTmnNSQZqDIDG7cjq1zciX7PNDQc';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        let currentMood = 'gold';
+        const moodColors = { gold: '#ffb347', pink: '#ff85a1', blue: '#70a1ff' };
+        let editingId = null;
 
-        fetchDiaries();
+        fetchDiaries();
 
-        function handleFile(input) {
-            const file = input.files[0];
-            if (file) {
-                selectedFile = file;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const preview = document.getElementById('imagePreview');
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        }
+        function toggleTimeInput(cb) {
+            document.getElementById('capsuleTime').style.display = cb.checked ? 'block' : 'none';
+        }
 
-        function toggleTimeInput(cb) {
-            document.getElementById('capsuleTime').style.display = cb.checked ? 'block' : 'none';
-        }
+        function validatePass(val) {
+            const btn = document.getElementById('enterBtn');
+            if (val === '邱天' || val === '1314') {
+                btn.classList.add('visible');
+                fetchDiaries();
+            } else {
+                btn.classList.remove('visible');
+            }
+        }
 
-        function validatePass(val) {
-            const btn = document.getElementById('enterBtn');
-            if (val === '邱天' || val === '1314') {
-                btn.classList.add('visible');
-                fetchDiaries();
-            } else {
-                btn.classList.remove('visible');
-            }
-        }
+        function grantAccess() {
+            const music = document.getElementById('bgMusic');
+            const toggle = document.getElementById('musicToggle');
+            const overlay = document.getElementById('passcodeOverlay');
+            music.muted = false; music.volume = 1.0;
+            music.play().then(() => toggle.classList.add('playing')).catch(e => console.log("Music ready"));
+            overlay.style.opacity = '0';
+            setTimeout(() => { overlay.style.display = 'none'; startSite(); }, 800);
+        }
 
-        function grantAccess() {
-            const music = document.getElementById('bgMusic');
-            const toggle = document.getElementById('musicToggle');
-            const overlay = document.getElementById('passcodeOverlay');
-            music.muted = false; music.volume = 1.0;
-            music.play().then(() => toggle.classList.add('playing')).catch(e => console.log("Music wait"));
-            overlay.style.opacity = '0';
-            setTimeout(() => { overlay.style.display = 'none'; startSite(); }, 800);
-        }
+        function toggleMusic() {
+            const music = document.getElementById('bgMusic');
+            const btn = document.getElementById('musicToggle');
+            music.muted = false;
+            if (music.paused) { music.play().then(() => btn.classList.add('playing')); } 
+            else { music.pause(); btn.classList.remove('playing'); }
+        }
 
-        function toggleMusic() {
-            const music = document.getElementById('bgMusic');
-            const btn = document.getElementById('musicToggle');
-            music.muted = false;
-            if (music.paused) { music.play().then(() => btn.classList.add('playing')); } 
-            else { music.pause(); btn.classList.remove('playing'); }
-        }
+        async function fetchDiaries() {
+            const { data } = await supabaseClient.from('ForestLog').select('*').order('created_at', { ascending: false });
+            if (data) { renderDiaries(data); }
+        }
 
-        async function fetchDiaries() {
-            const { data } = await supabaseClient.from('ForestLog').select('*').order('created_at', { ascending: false });
-            if (data) { renderDiaries(data); }
-        }
+        function renderDiaries(data) {
+            const list = document.getElementById('diary-list');
+            if (!list) return;
+            const now = new Date();
+            list.innerHTML = data.map(item => {
+                const unlockAt = item.unlock_at ? new Date(item.unlock_at) : new Date(new Date(item.created_at).getTime() + 86400000);
+                const isLocked = item.is_capsule && now < unlockAt;
+                let timeTip = '';
+                if (isLocked) {
+                    const diff = unlockAt - now;
+                    const h = Math.floor(diff / 3600000);
+                    const m = Math.floor((diff % 3600000) / 60000);
+                    timeTip = ` (⏳ 预计 ${h}时${m}分后开启)`;
+                }
+                
+                // ！！极其关键：这里删除了所有换行和缩进空格，避免被 pre-wrap 渲染！！
+                return `
+                <div class="diary-item" style="border-left-color: ${moodColors[item.mood] || moodColors.gold} !important;">
+                    <div class="diary-header">
+                        <div style="font-size:0.8rem; color:#8da399">
+                            <span style="color:#ffb347; font-weight:bold; margin-right:8px;">${item.author || '匿名'}</span>
+                            ${new Date(item.created_at).toLocaleString()}
+                        </div>
+                        <div class="actions">
+                            <button class="action-btn" onclick="startEdit('${item.id}', \`${item.content.replace(/'/g, "\\'")}\`, '${item.author}')">✎</button>
+                            <button class="action-btn" onclick="deleteEntry('${item.id}')">✕</button>
+                        </div>
+                    </div>
+                    <div class="diary-text" style="${isLocked ? 'color:#555; font-style:italic;' : ''}">${isLocked ? `时光胶囊传送中...${timeTip}` : item.content}</div>
+                </div>
+                `;
+            }).join('');
+        }
 
-        function renderDiaries(data) {
-            const list = document.getElementById('diary-list');
-            if (!list) return;
-            const now = new Date();
-            let htmlStr = '';
-            
-            data.forEach(item => {
-                const unlockAt = item.unlock_at ? new Date(item.unlock_at) : new Date(new Date(item.created_at).getTime() + 86400000);
-                const isLocked = item.is_capsule && now < unlockAt;
-                let timeTip = '';
-                if (isLocked) {
-                    const diff = unlockAt - now;
-                    const h = Math.floor(diff / 3600000);
-                    const m = Math.floor((diff % 3600000) / 60000);
-                    timeTip = ` (⏳ 预计 ${h}时${m}分后开启)`;
-                }
-                
-                const borderColor = moodColors[item.mood] || moodColors.gold;
-                const imgHtml = (!isLocked && item.image_url) ? `<img src="${item.image_url}" class="diary-image" onclick="window.open(this.src)">` : '';
+        async function publishEntry() {
+            const content = document.getElementById('diaryInput').value.trim();
+            const author = document.getElementById('authorName').value || '匿名';
+            const isCapsule = document.getElementById('capsuleCheck').checked;
+            const unlockAt = document.getElementById('capsuleTime').value;
+            if (!content) return;
+            const payload = { content, author, mood: currentMood, is_capsule: isCapsule };
+            if (isCapsule && unlockAt) { payload.unlock_at = new Date(unlockAt).toISOString(); }
+            
+            if (editingId) {
+                await supabaseClient.from('ForestLog').update(payload).eq('id', editingId);
+                editingId = null;
+                document.getElementById('publishBtn').innerText = '发布日志';
+            } else {
+                await supabaseClient.from('ForestLog').insert([payload]);
+            }
+            document.getElementById('diaryInput').value = '';
+            document.getElementById('capsuleCheck').checked = false;
+            document.getElementById('capsuleTime').style.display = 'none';
+            fetchDiaries();
+        }
 
-                htmlStr += `
-                <div class="diary-item" style="border-left-color: ${borderColor} !important;">
-                    <div class="diary-header">
-                        <div style="font-size:0.8rem; color:#8da399">
-                            <span style="color:#ffb347; font-weight:bold; margin-right:8px;">${item.author || '匿名'}</span>
-                            ${new Date(item.created_at).toLocaleString()}
-                        </div>
-                        <div class="actions">
-                            <button class="action-btn" onclick="startEdit('${item.id}', \`${item.content.replace(/'/g, "\\'")}\`, '${item.author}')">✎</button>
-                            <button class="action-btn" onclick="deleteEntry('${item.id}')">✕</button>
-                        </div>
-                    </div>
-                    <div class="diary-text" style="${isLocked ? 'color:#555; font-style:italic;' : ''}">${isLocked ? `时光胶囊传送中...${timeTip}` : item.content}</div>
-                    ${imgHtml}
-                </div>`;
-            });
-            list.innerHTML = htmlStr;
-        }
+        function startEdit(id, content, author) {
+            editingId = id;
+            document.getElementById('diaryInput').value = content;
+            document.getElementById('authorName').value = author;
+            document.getElementById('publishBtn').innerText = '保存修改';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-        async function publishEntry() {
-            const content = document.getElementById('diaryInput').value.trim();
-            const author = document.getElementById('authorName').value || '匿名';
-            const isCapsule = document.getElementById('capsuleCheck').checked;
-            const unlockAt = document.getElementById('capsuleTime').value;
-            const publishBtn = document.getElementById('publishBtn');
+        async function deleteEntry(id) { await supabaseClient.from('ForestLog').delete().eq('id', id); fetchDiaries(); }
 
-            if (!content && !selectedFile) return;
-            publishBtn.innerText = '发送中...';
-            publishBtn.disabled = true;
+        function setMood(mood, btn) {
+            currentMood = mood;
+            document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
 
-            let imageUrl = null;
-            
-            if (selectedFile) {
-                const fileExt = selectedFile.name.split('.').pop();
-                const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-                const { data: uploadData, error } = await supabaseClient.storage
-                    .from('forest-images')
-                    .upload(fileName, selectedFile);
-                
-                if (uploadData) {
-                    const { data: urlData } = supabaseClient.storage
-                        .from('forest-images')
-                        .getPublicUrl(fileName);
-                    imageUrl = urlData.publicUrl;
-                }
-            }
+        function createHeart() {
+            const container = document.getElementById('heart-container');
+            if (!container) return;
+            const heart = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            heart.setAttribute("viewBox", "0 0 24 24");
+            heart.setAttribute("class", "heart");
+            const size = Math.random() * 20 + 30;
+            heart.style.width = size + "px";
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.animationDuration = (Math.random() * 4 + 6) + "s";
+            heart.style.fill = moodColors[currentMood];
+            heart.innerHTML = `<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>`;
+            container.appendChild(heart);
+            setTimeout(() => heart.remove(), 10000);
+        }
 
-            const payload = { content, author, mood: currentMood, is_capsule: isCapsule };
-            if (imageUrl) payload.image_url = imageUrl;
-            if (isCapsule && unlockAt) { payload.unlock_at = new Date(unlockAt).toISOString(); }
-            
-            if (editingId) {
-                await supabaseClient.from('ForestLog').update(payload).eq('id', editingId);
-                editingId = null;
-            } else {
-                await supabaseClient.from('ForestLog').insert([payload]);
-            }
-
-            document.getElementById('diaryInput').value = '';
-            document.getElementById('imagePreview').style.display = 'none';
-            document.getElementById('capsuleCheck').checked = false;
-            document.getElementById('capsuleTime').style.display = 'none';
-            document.getElementById('fileInput').value = ''; 
-            selectedFile = null;
-
-            publishBtn.innerText = '发布日志';
-            publishBtn.disabled = false;
-            fetchDiaries();
-        }
-
-        function startEdit(id, content, author) {
-            editingId = id;
-            document.getElementById('diaryInput').value = content;
-            document.getElementById('authorName').value = author;
-            document.getElementById('publishBtn').innerText = '保存修改';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        async function deleteEntry(id) { await supabaseClient.from('ForestLog').delete().eq('id', id); fetchDiaries(); }
-
-        function setMood(mood, btn) {
-            currentMood = mood;
-            document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        }
-
-        function createHeart() {
-            const container = document.getElementById('heart-container');
-            if (!container) return;
-            const heart = document.createElementNS("[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)", "svg");
-            heart.setAttribute("viewBox", "0 0 24 24");
-            heart.setAttribute("class", "heart");
-            const size = Math.random() * 20 + 30;
-            heart.style.width = size + "px";
-            heart.style.left = Math.random() * 100 + "vw";
-            heart.style.animationDuration = (Math.random() * 4 + 6) + "s";
-            heart.style.fill = moodColors[currentMood];
-            heart.innerHTML = `<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>`;
-            container.appendChild(heart);
-            setTimeout(() => heart.remove(), 10000);
-        }
-
-        function startSite() {
-            setInterval(createHeart, 300);
-            supabaseClient.channel('any').on('postgres_changes', { event: '*', schema: 'public', table: 'ForestLog' }, fetchDiaries).subscribe();
-        }
-    </script>
+        function startSite() {
+            setInterval(createHeart, 300);
+            supabaseClient.channel('any').on('postgres_changes', { event: '*', schema: 'public', table: 'ForestLog' }, fetchDiaries).subscribe();
+        }
+    </script>
 </body>
 </html>
