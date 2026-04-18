@@ -18,37 +18,138 @@
         }
 
         body {
-            margin: 0; background-color: var(--forest-bg); color: white;
+            margin: 0; 
+            background-color: var(--forest-bg); 
+            color: white;
             font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-            display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; padding: 0 20px; overflow-x: hidden;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            min-height: 100vh; 
+            padding: 0 20px; 
+            overflow-x: hidden;
         }
 
         /* 音乐按钮 */
-        #musicToggle { position: fixed; top: 20px; right: 20px; z-index: 1100; cursor: pointer; font-size: 1.6rem; opacity: 0.8; }
+        #musicToggle { 
+            position: fixed; 
+            top: 20px; 
+            right: 20px; 
+            z-index: 1100; 
+            cursor: pointer; 
+            font-size: 1.6rem; 
+            opacity: 0.8; 
+            filter: drop-shadow(0 0 5px var(--autumn-gold));
+        }
         #musicToggle.playing { animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+        @keyframes pulse { 
+            0% { transform: scale(1); } 
+            50% { transform: scale(1.15); } 
+            100% { transform: scale(1); } 
+        }
 
         /* 暗号遮罩 */
-        #passcodeOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--forest-bg); z-index: 2000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.8s; }
-        #enterBtn { margin-top: 25px; padding: 10px 40px; background: var(--autumn-gold); border: none; color: #1c2b23; border-radius: 25px; cursor: pointer; font-weight: bold; opacity: 0; transform: translateY(10px); pointer-events: none; transition: 0.3s; }
-        #enterBtn.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        #passcodeOverlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: var(--forest-bg); 
+            z-index: 2000; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            transition: 0.8s; 
+        }
+        
+        #enterBtn { 
+            margin-top: 25px; 
+            padding: 10px 40px; 
+            background: var(--autumn-gold); 
+            border: none; 
+            color: #1c2b23; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            opacity: 0; 
+            transform: translateY(10px); 
+            pointer-events: none; 
+            transition: 0.3s; 
+        }
+        #enterBtn.visible { 
+            opacity: 1; 
+            transform: translateY(0); 
+            pointer-events: auto; 
+        }
 
         /* 爱心动画 */
-        #heart-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-        .heart { position: absolute; filter: drop-shadow(0 0 8px rgba(255,179,71,0.4)); animation: fall linear infinite; top: -50px; }
-        @keyframes fall { 0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; } 10% { opacity: 0.8; } 100% { transform: translateY(110vh) rotate(360deg) scale(1.2); opacity: 0; } }
+        #heart-container { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            pointer-events: none; 
+            z-index: 0; 
+        }
+        .heart { 
+            position: absolute; 
+            filter: drop-shadow(0 0 8px rgba(255,179,71,0.4)); 
+            animation: fall linear infinite; 
+            top: -50px; 
+        }
+        @keyframes fall { 
+            0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; } 
+            10% { opacity: 0.8; } 
+            100% { transform: translateY(110vh) rotate(360deg) scale(1.2); opacity: 0; } 
+        }
 
-        header { text-align: center; margin-top: 100px; margin-bottom: 30px; z-index: 1; }
+        header { 
+            text-align: center; 
+            margin-top: 100px; 
+            margin-bottom: 30px; 
+            z-index: 1; 
+        }
         .forest-text { font-size: 1.6rem; color: var(--forest-dark); font-weight: bold; margin-bottom: 12px; }
         .autumn-text { font-size: 2.3rem; color: var(--autumn-gold); font-weight: bold; }
 
         /* 输入区 */
-        .input-section { width: 100%; max-width: 500px; background: var(--card-bg); padding: 15px; border-radius: 18px; margin-bottom: 25px; border: 1px solid var(--card-border); z-index: 1; backdrop-filter: blur(10px); box-sizing: border-box; }
-        textarea { width: 100%; background: transparent; border: none; color: white; font-size: 1.1rem; resize: none; outline: none; height: 60px; box-sizing: border-box; }
+        .input-section { 
+            width: 100%; 
+            max-width: 500px; 
+            background: var(--card-bg); 
+            padding: 15px 20px; 
+            border-radius: 18px; 
+            margin-bottom: 25px; 
+            border: 1px solid var(--card-border); 
+            z-index: 1; 
+            backdrop-filter: blur(10px); 
+            box-sizing: border-box; 
+        }
+        textarea { 
+            width: 100%; 
+            background: transparent; 
+            border: none; 
+            color: white; 
+            font-size: 1.1rem; 
+            resize: none; 
+            outline: none; 
+            height: 60px; 
+            box-sizing: border-box; 
+        }
         
         /* 照片预览图 */
-        #imagePreview { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; display: none; margin-bottom: 10px; border: 1px solid var(--autumn-gold); }
+        #imagePreview { 
+            width: 60px; 
+            height: 60px; 
+            object-fit: cover; 
+            border-radius: 8px; 
+            display: none; 
+            margin-bottom: 10px; 
+            border: 1px solid var(--autumn-gold); 
+        }
 
         .mood-selector { display: flex; gap: 12px; margin: 10px 0; }
         .mood-btn { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 1.5px solid transparent; transition: 0.3s; }
@@ -57,7 +158,17 @@
         .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; flex-wrap: wrap; gap: 10px; }
         .author-input { background: rgba(255,255,255,0.08); border: 1px solid #444; color: #eee; border-radius: 10px; padding: 6px 10px; width: 80px; font-size: 0.9rem; }
         
-        #capsuleTime { background: #ffffff !important; color: #000000 !important; border: 2px solid var(--autumn-gold); border-radius: 8px; padding: 4px; font-size: 0.8rem; display: none; font-weight: bold; }
+        /* 时间选择器 */
+        #capsuleTime { 
+            background: #ffffff !important; 
+            color: #000000 !important; 
+            border: 2px solid var(--autumn-gold); 
+            border-radius: 8px; 
+            padding: 4px; 
+            font-size: 0.8rem; 
+            display: none; 
+            font-weight: bold; 
+        }
         
         /* 照片上传按钮样式 */
         .photo-btn { font-size: 1.2rem; cursor: pointer; opacity: 0.8; transition: 0.3s; }
@@ -65,21 +176,67 @@
 
         button#publishBtn { background: var(--autumn-gold); border: none; padding: 10px 22px; border-radius: 25px; cursor: pointer; font-weight: bold; color: #1c2b23; }
 
-        /* 日志项样式 */
-        #diary-list { width: 100%; max-width: 500px; z-index: 1; padding-bottom: 50px; box-sizing: border-box; }
-        .diary-item { background: var(--card-bg); padding: 8px 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--card-border); border-left: 5px solid var(--autumn-gold) !important; backdrop-filter: blur(5px); position: relative; width: 100%; box-sizing: border-box; }
-        .diary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        /* 日志列表 */
+        #diary-list { 
+            width: 100%; 
+            max-width: 500px; 
+            z-index: 1; 
+            padding-bottom: 50px; 
+            box-sizing: border-box; 
+        }
         
-        /* 这里的正文必须紧凑靠左 */
-        .diary-text { text-align: left !important; line-height: 1.5; white-space: pre-wrap; font-size: 1rem; word-break: break-word; margin: 0; padding: 0; color: white; }
+        /* 核心修复：日志框紧凑样式 */
+        .diary-item { 
+            background: var(--card-bg); 
+            padding: 10px 15px !important; 
+            border-radius: 12px; 
+            margin-bottom: 12px; 
+            border: 1px solid var(--card-border); 
+            border-left: 5px solid var(--autumn-gold); 
+            backdrop-filter: blur(5px); 
+            position: relative; 
+            width: 100%; 
+            box-sizing: border-box; 
+        }
+        
+        .diary-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 6px; 
+        }
+        
+        /* 核心修复：正文靠左强制锁定 */
+        .diary-text { 
+            text-align: left !important; 
+            line-height: 1.5; 
+            white-space: pre-wrap; 
+            font-size: 1rem; 
+            word-break: break-word; 
+            margin: 0; 
+            padding: 0; 
+            color: white; 
+            width: 100%;
+            display: block;
+        }
         
         /* 日志内的照片 */
-        .diary-image { width: 100%; max-width: 300px; border-radius: 10px; margin-top: 8px; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
+        .diary-image { 
+            width: 100%; 
+            max-width: 300px; 
+            border-radius: 10px; 
+            margin-top: 8px; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            cursor: pointer; 
+        }
 
         .actions { display: flex; gap: 12px; align-items: center; }
         .action-btn { background: none; border: none; color: var(--forest-text); cursor: pointer; opacity: 0.5; font-size: 1rem; }
 
-        @media (max-width: 600px) { header { margin-top: 100px; } .input-section, #diary-list { width: 92%; padding: 15px; } }
+        @media (max-width: 600px) { 
+            header { margin-top: 100px; } 
+            .input-section, #diary-list { width: 92%; padding: 15px; } 
+        }
     </style>
 </head>
 <body>
@@ -170,7 +327,7 @@
             const toggle = document.getElementById('musicToggle');
             const overlay = document.getElementById('passcodeOverlay');
             music.muted = false; music.volume = 1.0;
-            music.play().then(() => toggle.classList.add('playing')).catch(e => console.log("Music ready"));
+            music.play().then(() => toggle.classList.add('playing')).catch(e => console.log("等待交互"));
             overlay.style.opacity = '0';
             setTimeout(() => { overlay.style.display = 'none'; startSite(); }, 800);
         }
@@ -192,7 +349,9 @@
             const list = document.getElementById('diary-list');
             if (!list) return;
             const now = new Date();
-            list.innerHTML = data.map(item => {
+            
+            let htmlStr = '';
+            data.forEach(item => {
                 const unlockAt = item.unlock_at ? new Date(item.unlock_at) : new Date(new Date(item.created_at).getTime() + 86400000);
                 const isLocked = item.is_capsule && now < unlockAt;
                 let timeTip = '';
@@ -203,23 +362,30 @@
                     timeTip = ` (⏳ 预计 ${h}时${m}分后开启)`;
                 }
                 
-                return `
-                <div class="diary-item" style="border-left-color: ${moodColors[item.mood] || moodColors.gold} !important;">
+                const authorText = item.author || '匿名';
+                const dateText = new Date(item.created_at).toLocaleString();
+                const borderColor = moodColors[item.mood] || moodColors.gold;
+                const safeContent = isLocked ? `时光胶囊传送中...${timeTip}` : item.content;
+                const textStyle = isLocked ? 'color:#555; font-style:italic;' : '';
+                const imgHtml = (!isLocked && item.image_url) ? `<img src="${item.image_url}" class="diary-image" onclick="window.open(this.src)">` : '';
+
+                htmlStr += `
+                <div class="diary-item" style="border-left-color: ${borderColor} !important;">
                     <div class="diary-header">
                         <div style="font-size:0.8rem; color:#8da399">
-                            <span style="color:#ffb347; font-weight:bold; margin-right:8px;">${item.author || '匿名'}</span>
-                            ${new Date(item.created_at).toLocaleString()}
+                            <span style="color:#ffb347; font-weight:bold; margin-right:8px;">${authorText}</span>
+                            ${dateText}
                         </div>
                         <div class="actions">
                             <button class="action-btn" onclick="startEdit('${item.id}', \`${item.content.replace(/'/g, "\\'")}\`, '${item.author}')">✎</button>
                             <button class="action-btn" onclick="deleteEntry('${item.id}')">✕</button>
                         </div>
                     </div>
-                    <div class="diary-text" style="${isLocked ? 'color:#555; font-style:italic;' : ''}">${isLocked ? `时光胶囊传送中...${timeTip}` : item.content}</div>
-                    ${!isLocked && item.image_url ? `<img src="${item.image_url}" class="diary-image" onclick="window.open(this.src)">` : ''}
-                </div>
-                `;
-            }).join('');
+                    <div class="diary-text" style="${textStyle}">${safeContent}</div>
+                    ${imgHtml}
+                </div>`;
+            });
+            list.innerHTML = htmlStr;
         }
 
         async function publishEntry() {
@@ -235,7 +401,7 @@
 
             let imageUrl = null;
             
-            // ！！核心：如果有照片，先上传到 Storage ！！
+            // 核心照片上传逻辑
             if (selectedFile) {
                 const fileExt = selectedFile.name.split('.').pop();
                 const fileName = `${Math.random()}.${fileExt}`;
@@ -251,7 +417,8 @@
                 }
             }
 
-            const payload = { content, author, mood: currentMood, is_capsule: isCapsule, image_url: imageUrl };
+            const payload = { content, author, mood: currentMood, is_capsule: isCapsule };
+            if (imageUrl) payload.image_url = imageUrl;
             if (isCapsule && unlockAt) { payload.unlock_at = new Date(unlockAt).toISOString(); }
             
             if (editingId) {
@@ -280,7 +447,10 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        async function deleteEntry(id) { await supabaseClient.from('ForestLog').delete().eq('id', id); fetchDiaries(); }
+        async function deleteEntry(id) { 
+            await supabaseClient.from('ForestLog').delete().eq('id', id); 
+            fetchDiaries(); 
+        }
 
         function setMood(mood, btn) {
             currentMood = mood;
