@@ -40,7 +40,6 @@
         .forest-text { font-size: 1.4rem; color: var(--forest-dark); font-weight: bold; margin-bottom: 8px; }
         .autumn-text { font-size: 1.8rem; color: var(--autumn-gold); font-weight: bold; }
 
-        /* 输入区 */
         .input-section { width: 100%; max-width: 500px; background: var(--card-bg); padding: 12px 15px; border-radius: 18px; margin-bottom: 20px; border: 1px solid var(--card-border); z-index: 1; backdrop-filter: blur(10px); box-sizing: border-box; }
         textarea { width: 100%; background: transparent; border: none; color: white; font-size: 1.1rem; resize: none; outline: none; height: 50px; box-sizing: border-box; }
         
@@ -57,11 +56,11 @@
         .photo-btn { font-size: 1.2rem; cursor: pointer; opacity: 0.8; margin-right: 5px; }
         button#publishBtn { background: var(--autumn-gold); border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-weight: bold; color: #1c2b23; }
 
-        /* 🟢 日志列表：极致紧凑靠左（还原图1效果） */
+        /* 极致紧凑靠左的日志列表 */
         #diary-list { width: 100%; max-width: 500px; z-index: 1; padding-bottom: 50px; box-sizing: border-box; }
         .diary-item { 
             background: var(--card-bg); 
-            padding: 8px 15px !important; 
+            padding: 10px 15px !important; 
             border-radius: 12px; 
             margin-bottom: 12px; 
             border: 1px solid var(--card-border); 
@@ -72,11 +71,11 @@
             box-sizing: border-box; 
             text-align: left !important; 
         }
-        .diary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .diary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
         .diary-text { text-align: left !important; line-height: 1.4; white-space: pre-wrap; font-size: 0.95rem; word-break: break-word; color: white; margin: 0; padding: 0; }
         .diary-image { width: 100%; max-width: 260px; border-radius: 8px; margin-top: 8px; cursor: pointer; display: block; border: 1px solid rgba(255,255,255,0.1); }
 
-        /* 💬 回复区域样式 */
+        /* 回复区域样式 */
         .replies-section { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); }
         .reply-item { font-size: 0.85rem; color: #8da399; margin-bottom: 4px; padding-left: 8px; border-left: 2px solid rgba(255,179,71,0.3); line-height: 1.3; }
         .reply-name { color: var(--autumn-gold); font-weight: bold; margin-right: 5px; }
@@ -85,7 +84,6 @@
 
         .actions { display: flex; gap: 10px; align-items: center; }
         .action-btn { background: none; border: none; color: var(--forest-text); cursor: pointer; opacity: 0.6; font-size: 0.95rem; }
-        .action-btn:hover { opacity: 1; }
 
         @media (max-width: 600px) { header { margin-top: 80px; } .input-section, #diary-list { width: 92%; } }
     </style>
@@ -124,7 +122,7 @@
                 
                 <label style="font-size:0.8rem; color:#8da399; cursor:pointer;"><input type="checkbox" id="capsuleCheck" onchange="toggleTimeInput(this)"> 胶囊</label>
                 <input type="datetime-local" id="capsuleTime">
-                <button id="publishBtn" onclick="publishEntry()">发布日志</button>
+                <button id="publishBtn" type="button" onclick="publishEntry()">发布日志</button>
             </div>
         </div>
     </div>
@@ -140,7 +138,7 @@
         const moodColors = { gold: '#ffb347', pink: '#ff85a1', blue: '#70a1ff' };
         let editingId = null;
         let selectedFile = null;
-        let globalDiaries = []; // 核心防崩设计：数据全局存储，绝不塞进HTML标签里！
+        let globalDiaries = [];
 
         fetchDiaries();
 
@@ -169,7 +167,7 @@
             const music = document.getElementById('bgMusic');
             const toggle = document.getElementById('musicToggle');
             music.muted = false; music.volume = 1.0;
-            music.play().then(() => toggle.classList.add('playing')).catch(e => console.log("等待交互"));
+            music.play().then(() => toggle.classList.add('playing')).catch(e => console.log("需交互"));
             document.getElementById('passcodeOverlay').style.opacity = '0';
             setTimeout(() => { document.getElementById('passcodeOverlay').style.display = 'none'; startSite(); }, 800);
         }
@@ -207,7 +205,6 @@
                 
                 const imgHtml = (!isLocked && item.image_url) ? `<img src="${item.image_url}" class="diary-image" onclick="window.open(this.src)">` : '';
                 
-                // 处理回复内容
                 const replies = item.replies || [];
                 let repliesHtml = '';
                 if (replies.length > 0) {
@@ -216,15 +213,14 @@
                     `).join('') + `</div>`;
                 }
 
-                // 重点：onclick直接传ID，去全局数据里找，不再把文字塞进标签里导致崩溃！
                 return `
                 <div class="diary-item" style="border-left-color: ${moodColors[item.mood] || moodColors.gold} !important;">
                     <div class="diary-header">
                         <div style="font-size:0.75rem; color:#8da399"><span style="color:#ffb347; font-weight:bold; margin-right:8px;">${item.author || '匿名'}</span>${new Date(item.created_at).toLocaleString()}</div>
                         <div class="actions">
-                            <button class="action-btn" title="回复" onclick="toggleReplyBox('${item.id}')">💬</button>
-                            <button class="action-btn" title="编辑" onclick="startEdit('${item.id}')">✎</button>
-                            <button class="action-btn" title="删除" onclick="deleteEntry('${item.id}')">✕</button>
+                            <button type="button" class="action-btn" title="回复" onclick="toggleReplyBox('${item.id}')">💬</button>
+                            <button type="button" class="action-btn" title="编辑" onclick="startEdit('${item.id}')">✎</button>
+                            <button type="button" class="action-btn" title="删除" onclick="deleteEntry('${item.id}')">✕</button>
                         </div>
                     </div>
                     <div class="diary-text" style="${isLocked ? 'color:#555; font-style:italic;' : ''}">${isLocked ? `时光胶囊传送中...${timeTip}` : item.content}</div>
@@ -232,7 +228,7 @@
                     ${repliesHtml}
                     <div class="reply-input-box" id="reply-box-${item.id}">
                         <input type="text" class="reply-field" id="reply-input-${item.id}" placeholder="写下回复...">
-                        <button onclick="submitReply('${item.id}')" style="background:var(--autumn-gold); border:none; border-radius:12px; padding:4px 12px; font-size:0.75rem; cursor:pointer; font-weight:bold;">发送</button>
+                        <button type="button" onclick="submitReply('${item.id}')" style="background:var(--autumn-gold); border:none; border-radius:12px; padding:4px 12px; font-size:0.75rem; cursor:pointer; font-weight:bold;">发送</button>
                     </div>
                 </div>`;
             }).join('');
@@ -266,35 +262,57 @@
             const publishBtn = document.getElementById('publishBtn');
 
             if (!content && !selectedFile) return;
-            publishBtn.innerText = '发送中...'; publishBtn.disabled = true;
+            
+            publishBtn.innerText = '发送中...'; 
+            publishBtn.disabled = true;
 
-            let imageUrl = null;
-            if (selectedFile) {
-                const fileExt = selectedFile.name.split('.').pop();
-                const fileName = `${Date.now()}.${fileExt}`;
-                const { data: uploadData } = await supabaseClient.storage.from('forest-images').upload(fileName, selectedFile);
-                if (uploadData) { imageUrl = supabaseClient.storage.from('forest-images').getPublicUrl(fileName).data.publicUrl; }
+            try {
+                let imageUrl = null;
+                if (selectedFile) {
+                    const fileExt = selectedFile.name.split('.').pop();
+                    const fileName = `${Date.now()}.${fileExt}`;
+                    
+                    // 防爆处理：如果这里出错，会直接被 catch 捕获并弹窗报警
+                    const { data: uploadData, error: uploadError } = await supabaseClient.storage.from('forest-images').upload(fileName, selectedFile);
+                    
+                    if (uploadError) {
+                        throw new Error("图片上传失败。请检查 Supabase 存储桶是否命名为 forest-images 并设为了 Public。详细错误：" + uploadError.message);
+                    }
+                    if (uploadData) { 
+                        imageUrl = supabaseClient.storage.from('forest-images').getPublicUrl(fileName).data.publicUrl; 
+                    }
+                }
+
+                const payload = { content, author, mood: currentMood, is_capsule: isCapsule };
+                if (imageUrl) payload.image_url = imageUrl;
+                if (isCapsule && unlockAt) { payload.unlock_at = new Date(unlockAt).toISOString(); }
+
+                if (editingId) { 
+                    await supabaseClient.from('ForestLog').update(payload).eq('id', editingId); 
+                    editingId = null; 
+                } else { 
+                    const { error: dbError } = await supabaseClient.from('ForestLog').insert([payload]);
+                    if (dbError) throw new Error("保存到数据库失败：" + dbError.message);
+                }
+
+                // 成功后重置
+                document.getElementById('diaryInput').value = ''; 
+                document.getElementById('imagePreview').style.display = 'none';
+                document.getElementById('capsuleCheck').checked = false; 
+                document.getElementById('capsuleTime').style.display = 'none';
+                document.getElementById('fileInput').value = ''; 
+                selectedFile = null; 
+                fetchDiaries();
+
+            } catch (err) {
+                // 遇到错误直接弹窗报警，不再白屏死机！
+                alert(err.message);
+            } finally {
+                publishBtn.innerText = '发布日志'; 
+                publishBtn.disabled = false; 
             }
-
-            const payload = { content, author, mood: currentMood, is_capsule: isCapsule };
-            if (imageUrl) payload.image_url = imageUrl;
-            if (isCapsule && unlockAt) { payload.unlock_at = new Date(unlockAt).toISOString(); }
-
-            if (editingId) { await supabaseClient.from('ForestLog').update(payload).eq('id', editingId); editingId = null; } 
-            else { await supabaseClient.from('ForestLog').insert([payload]); }
-
-            document.getElementById('diaryInput').value = ''; 
-            document.getElementById('imagePreview').style.display = 'none';
-            document.getElementById('capsuleCheck').checked = false; 
-            document.getElementById('capsuleTime').style.display = 'none';
-            document.getElementById('fileInput').value = ''; 
-            selectedFile = null; 
-            publishBtn.innerText = '发布日志'; 
-            publishBtn.disabled = false; 
-            fetchDiaries();
         }
 
-        // 核心防崩：直接用ID去全局数据里找文字，绝不把文字当成代码塞进去！
         function startEdit(id) {
             const item = globalDiaries.find(d => d.id === id);
             if (!item) return;
