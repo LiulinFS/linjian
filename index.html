@@ -82,6 +82,27 @@
         .actions { display: flex; gap: 10px; align-items: center; }
         .action-btn { background: none; border: none; color: var(--forest-text); cursor: pointer; opacity: 0.6; font-size: 0.95rem; }
 
+        /* 🔴 专属内部弹窗样式 */
+        #customConfirm {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(28, 43, 35, 0.7); z-index: 3000;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: 0.3s;
+        }
+        #customConfirm.show { opacity: 1; pointer-events: auto; }
+        .confirm-box {
+            background: var(--card-bg); padding: 20px 30px; border-radius: 15px;
+            border: 1px solid var(--card-border); backdrop-filter: blur(15px);
+            text-align: center; transform: translateY(20px); transition: 0.3s;
+        }
+        #customConfirm.show .confirm-box { transform: translateY(0); }
+        .confirm-text { color: white; font-size: 1rem; margin-bottom: 20px; }
+        .confirm-actions { display: flex; gap: 15px; justify-content: center; }
+        .btn-cancel { background: rgba(255,255,255,0.1); border: none; color: #ccc; padding: 6px 18px; border-radius: 20px; cursor: pointer; transition: 0.2s; }
+        .btn-cancel:hover { background: rgba(255,255,255,0.2); }
+        .btn-delete { background: #ff5e5e; border: none; color: white; padding: 6px 18px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-delete:hover { transform: scale(1.05); box-shadow: 0 0 10px rgba(255,94,94,0.4); }
+
         @media (max-width: 600px) { header { margin-top: 80px; } .input-section, #diary-list { width: 92%; } }
     </style>
 </head>
@@ -94,6 +115,16 @@
         <p style="color: #8da399; margin-bottom: 15px;">输入暗号进入林间</p>
         <input type="password" id="passInput" placeholder="请输入..." style="background:transparent; border:none; border-bottom:1px solid #ffb347; color:white; text-align:center; outline:none; font-size:1.2rem;" oninput="validatePass(this.value)">
         <button id="enterBtn" onclick="grantAccess()">开启森林</button>
+    </div>
+
+    <div id="customConfirm">
+        <div class="confirm-box">
+            <div class="confirm-text" id="confirmMsg">确定要删除吗？</div>
+            <div class="confirm-actions">
+                <button class="btn-cancel" onclick="closeConfirmModal()">取消</button>
+                <button class="btn-delete" id="confirmYesBtn">删除</button>
+            </div>
+        </div>
     </div>
 
     <div id="heart-container"></div>
@@ -135,6 +166,7 @@
         let editingId = null;
         let selectedFile = null;
         let globalDiaries = [];
+        let confirmAction = null; // 存放弹窗确认后要执行的代码
 
         fetchDiaries();
 
@@ -192,7 +224,7 @@
                 if (isLocked) {
                     const diff = unlockAt - now;
                     const h = Math.floor(diff / 3600000); const m = Math.floor((diff % 3600000) / 60000);
-                    timeTip = ` (⏳ 预计 ${h}时${m}分后开启)`;
+                    timeTip = ` (⏳ ${h}时${m}分后开启)`;
                 }
                 const imgHtml = (!isLocked && item.image_url) ? `<img src="${item.image_url}" class="diary-image" onclick="window.open(this.src)">` : '';
                 
@@ -202,7 +234,7 @@
                     repliesHtml = `<div class="replies-section">` + replies.map((r, index) => `
                         <div class="reply-item">
                             <div class="reply-content"><span class="reply-name">${r.name}:</span>${r.text}</div>
-                            <button class="del-reply-btn" onclick="deleteReply('${item.id}', ${index})">✕</button>
+                            <button class="del-reply-btn" onclick="openConfirmModal('reply', '${item.id}', ${index})">✕</button>
                         </div>
                     `).join('') + `</div>`;
                 }
@@ -214,7 +246,7 @@
                         <div class="actions">
                             <button class="action-btn" title="回复" onclick="toggleReplyBox('${item.id}')">💬</button>
                             <button class="action-btn" title="编辑" onclick="startEdit('${item.id}')">✎</button>
-                            <button class="action-btn" title="删除" onclick="deleteEntry('${item.id}')">✕</button>
+                            <button class="action-btn" title="删除" onclick="openConfirmModal('log', '${item.id}')">✕</button>
                         </div>
                     </div>
                     <div class="diary-text" style="${isLocked ? 'color:#555; font-style:italic;' : ''}">${isLocked ? `时光胶囊传送中...${timeTip}` : item.content}</div>
@@ -222,21 +254,51 @@
                     ${repliesHtml}
                     <div class="reply-input-box" id="reply-box-${item.id}">
                         <input type="text" class="reply-field" id="reply-input-${item.id}" placeholder="写下回复...">
-                        <button onclick="submitReply('${item.id}')" style="background:var(--autumn-gold); border:none; border-radius:12px; padding:4px 12px; font-size:0.75rem; cursor:pointer; font-weight:bold;">发送</button>
+                        <button id="replyBtn-${item.id}" onclick="submitReply('${item.id}')" style="background:var(--autumn-gold); border:none; border-radius:12px; padding:4px 12px; font-size:0.75rem; cursor:pointer; font-weight:bold;">发送</button>
                     </div>
                 </div>`;
             }).join('');
         }
 
-        async function deleteReply(id, index) {
-            if (!confirm("确定删除这条留言吗？")) return;
-            const item = globalDiaries.find(d => String(d.id) === String(id));
-            if (!item) return;
-            const newReplies = [...item.replies];
-            newReplies.splice(index, 1);
-            await supabaseClient.from('ForestLog').update({ replies: newReplies }).eq('id', id);
-            fetchDiaries();
+        // 🔴 自定义弹窗逻辑
+        function openConfirmModal(type, id, index = null) {
+            const modal = document.getElementById('customConfirm');
+            const msg = document.getElementById('confirmMsg');
+            
+            if (type === 'log') {
+                msg.innerText = "确定要删除这篇日志吗？";
+                confirmAction = async () => {
+                    closeConfirmModal();
+                    await supabaseClient.from('ForestLog').delete().eq('id', id);
+                    fetchDiaries();
+                };
+            } else if (type === 'reply') {
+                msg.innerText = "确定要删除这条留言吗？";
+                confirmAction = async () => {
+                    closeConfirmModal();
+                    const item = globalDiaries.find(d => String(d.id) === String(id));
+                    if (!item) return;
+                    const newReplies = [...item.replies];
+                    newReplies.splice(index, 1);
+                    await supabaseClient.from('ForestLog').update({ replies: newReplies }).eq('id', id);
+                    fetchDiaries();
+                };
+            }
+            
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10); // 触发动画
         }
+
+        function closeConfirmModal() {
+            const modal = document.getElementById('customConfirm');
+            modal.classList.remove('show');
+            setTimeout(() => { modal.style.display = 'none'; confirmAction = null; }, 300);
+        }
+
+        // 绑定弹窗的确认按钮
+        document.getElementById('confirmYesBtn').addEventListener('click', () => {
+            if (confirmAction) confirmAction();
+        });
 
         function toggleReplyBox(id) {
             const box = document.getElementById(`reply-box-${id}`);
@@ -245,20 +307,21 @@
 
         async function submitReply(id) {
             const input = document.getElementById(`reply-input-${id}`);
+            const btn = document.getElementById(`replyBtn-${id}`);
             const text = input.value.trim();
             const name = document.getElementById('authorName').value || '匿名';
             if (!text) return;
             
-            // ！！重点：转成字符串比对，防止报错！！
             const item = globalDiaries.find(d => String(d.id) === String(id));
             if (!item) return alert("未找到该日志数据");
 
-            const newReplies = [...(item.replies || []), { name, text, time: new Date() }];
-
-            await supabaseClient.from('ForestLog').update({ replies: newReplies }).eq('id', id);
-            input.value = '';
-            toggleReplyBox(id);
-            fetchDiaries();
+            btn.innerText = "..."; btn.disabled = true;
+            try {
+                const newReplies = [...(item.replies || []), { name, text, time: new Date() }];
+                await supabaseClient.from('ForestLog').update({ replies: newReplies }).eq('id', id);
+                input.value = ''; toggleReplyBox(id); fetchDiaries();
+            } catch(e) { alert("回复失败"); }
+            finally { btn.innerText = "发送"; btn.disabled = false; }
         }
 
         async function publishEntry() {
@@ -300,7 +363,6 @@
         }
 
         function startEdit(id) {
-            // ！！重点：转成字符串比对，彻底防爆！！
             const item = globalDiaries.find(d => String(d.id) === String(id));
             if (!item) return;
             editingId = id; 
@@ -309,8 +371,6 @@
             document.getElementById('publishBtn').innerText = '保存修改'; 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-
-        async function deleteEntry(id) { if(confirm("确定删除这篇日志吗？")) { await supabaseClient.from('ForestLog').delete().eq('id', id); fetchDiaries(); } }
 
         function setMood(mood, btn) {
             currentMood = mood; document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
