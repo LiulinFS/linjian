@@ -52,12 +52,11 @@
 
         #imagePreview { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; display: none; margin-bottom: 12px; border: 1px solid var(--autumn-gold); }
 
+        /* 控制区与相机对齐 */
         .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; flex-wrap: wrap; gap: 10px; }
         .author-input { background: rgba(255,255,255,0.08); border: 1px solid #444; color: #eee; border-radius: 12px; padding: 6px 12px; width: 80px; font-size: 0.9rem; }
-        
-        /* 📷 相机与胶囊水平对齐修复 */
         .control-right { display: flex; align-items: center; gap: 12px; }
-        .photo-btn { font-size: 1.35rem; cursor: pointer; opacity: 0.9; display: inline-flex; align-items: center; margin-top: -5px; }
+        .photo-btn { font-size: 1.35rem; cursor: pointer; opacity: 0.9; display: inline-flex; align-items: center; margin-top: -6px; }
         .capsule-label { font-size: 0.85rem; color: #8da399; cursor: pointer; display: flex; align-items: center; gap: 5px; }
         #capsuleTime { background: #fff !important; color: #000 !important; border-radius: 6px; padding: 3px 8px; font-size: 0.8rem; display: none; }
         button#publishBtn { background: var(--autumn-gold); border: none; padding: 10px 22px; border-radius: 25px; cursor: pointer; font-weight: bold; color: #1c2b23; transition: 0.3s; }
@@ -84,39 +83,34 @@
         
         .reply-actions { display: flex; gap: 5px; margin-left: 10px; align-items: center; }
         .tiny-btn { background: none; border: none; cursor: pointer; opacity: 0.4; font-size: 0.8rem; padding: 2px; transition: 0.2s; }
-        .tiny-btn:hover { opacity: 1; }
         .btn-del { color: #ff5e5e; }
         .btn-edit { color: var(--forest-text); }
 
-        /* 🔴 留言原位编辑：名字与内容同行 */
-        .reply-edit-box { width: 100%; margin-top: 8px; background: rgba(255,255,255,0.04); padding: 10px; border-radius: 12px; }
-        .reply-edit-row { display: flex; align-items: center; gap: 5px; margin-bottom: 8px; flex-wrap: wrap; }
+        /* 🔴 留言原位编辑：彻底去除线和多余框 */
+        .reply-edit-box { width: 100%; margin-top: 5px; }
+        .reply-edit-row { display: flex; align-items: center; gap: 2px; }
         .reply-edit-name { 
-            width: auto; min-width: 60px; max-width: 100px;
-            background: transparent; border: none; border-bottom: 1px dashed var(--autumn-gold); 
-            color: var(--autumn-gold); font-weight: bold; padding: 2px 4px; font-size: 0.9rem; outline: none; 
+            width: 50px; background: transparent; border: none; 
+            color: var(--autumn-gold); font-weight: bold; padding: 0; 
+            font-size: 0.9rem; outline: none; text-align: left;
         }
         .reply-edit-input { 
-            flex: 1; min-width: 180px;
-            background: rgba(255,255,255,0.06); border: 1px solid #444; color: white; 
-            border-radius: 8px; padding: 6px 12px; font-size: 0.9rem; outline: none; 
+            flex: 1; background: rgba(255,255,255,0.06); border: 1px solid #444; color: white; 
+            border-radius: 8px; padding: 4px 10px; font-size: 0.9rem; outline: none; 
         }
-
-        .edit-actions { display: flex; gap: 10px; justify-content: flex-end; }
-        .btn-mini-save { background: var(--autumn-gold); border: none; padding: 4px 15px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; font-weight: bold; }
-        .btn-mini-cancel { background: rgba(255,255,255,0.1); border: none; color: #ccc; padding: 4px 15px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; }
+        .edit-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+        .btn-mini-save { background: var(--autumn-gold); border: none; padding: 3px 12px; border-radius: 15px; font-size: 0.75rem; cursor: pointer; font-weight: bold; }
+        .btn-mini-cancel { background: rgba(255,255,255,0.1); border: none; color: #ccc; padding: 3px 12px; border-radius: 15px; font-size: 0.75rem; cursor: pointer; }
 
         .inline-edit-area { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid #555; color: white; border-radius: 10px; padding: 10px; font-size: 1rem; line-height: 1.6; outline: none; resize: none; margin-bottom: 10px; scrollbar-width: none; }
-
         .diary-image { width: 100%; max-width: 350px; border-radius: 10px; margin-top: 12px; cursor: pointer; display: block; border: 1px solid rgba(255,255,255,0.1); }
-
+        
         .reply-input-box { display: none; margin-top: 12px; gap: 10px; align-items: center; }
         .reply-field { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid #555; color: white; border-radius: 12px; padding: 8px 15px; font-size: 0.9rem; outline: none; }
 
         .actions { display: flex; gap: 12px; align-items: center; }
         .action-btn { background: none; border: none; color: var(--forest-text); cursor: pointer; opacity: 0.6; font-size: 1.05rem; }
 
-        /* 内部弹窗 */
         #customConfirm { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(28, 43, 35, 0.7); z-index: 3000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; }
         #customConfirm.show { opacity: 1; pointer-events: auto; }
         .confirm-box { background: #2a3d33; padding: 25px 35px; border-radius: 20px; border: 1px solid var(--card-border); backdrop-filter: blur(20px); text-align: center; }
@@ -219,10 +213,7 @@
             else { btn.classList.remove('visible'); }
         }
 
-        function grantAccess() {
-            document.getElementById('passcodeOverlay').style.opacity = '0';
-            setTimeout(() => { document.getElementById('passcodeOverlay').style.display = 'none'; startSite(); }, 800);
-        }
+        function grantAccess() { document.getElementById('passcodeOverlay').style.opacity = '0'; setTimeout(() => { document.getElementById('passcodeOverlay').style.display = 'none'; startSite(); }, 800); }
 
         function toggleMusic() {
             const music = document.getElementById('bgMusic');
@@ -264,9 +255,9 @@
                             return `
                             <div class="reply-edit-box">
                                 <div class="reply-edit-row">
-                                    <input type="text" id="reply-edit-name-${item.id}-${index}" class="reply-edit-name" value="${r.name}" placeholder="名字">
-                                    <span style="color:var(--autumn-gold); font-weight:bold;">:</span>
-                                    <input type="text" id="reply-edit-input-${item.id}-${index}" class="reply-edit-input" value="${r.text}" placeholder="留言内容">
+                                    <input type="text" id="reply-edit-name-${item.id}-${index}" class="reply-edit-name" value="${r.name}">
+                                    <span style="color:var(--autumn-gold); font-weight:bold; margin-right:4px;">:</span>
+                                    <input type="text" id="reply-edit-input-${item.id}-${index}" class="reply-edit-input" value="${r.text}">
                                 </div>
                                 <div class="edit-actions">
                                     <button class="btn-mini-cancel" onclick="cancelReplyEdit()">取消</button>
@@ -277,10 +268,7 @@
 
                         return `
                         <div class="reply-item">
-                            <div class="reply-content">
-                                <span class="reply-name">${r.name}:</span>${r.text}
-                                <span class="reply-time">${rTime}</span>
-                            </div>
+                            <div class="reply-content"><span class="reply-name">${r.name}:</span>${r.text}<span class="reply-time">${rTime}</span></div>
                             <div class="reply-actions">
                                 <button class="tiny-btn btn-edit" onclick="startReplyEdit('${item.id}', ${index})">✎</button>
                                 <button class="tiny-btn btn-del" onclick="openConfirmModal('reply', '${item.id}', ${index})">✕</button>
@@ -318,11 +306,7 @@
                     </div>
                 </div>`;
             }).join('');
-            
-            if(inlineEditingId) {
-                const el = document.getElementById(`inline-editor-${inlineEditingId}`);
-                if(el) autoResize(el);
-            }
+            if(inlineEditingId) { const el = document.getElementById(`inline-editor-${inlineEditingId}`); if(el) autoResize(el); }
         }
 
         async function saveReplyEdit(logId, index) {
