@@ -58,43 +58,50 @@
 
         .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; flex-wrap: wrap; gap: 10px; }
         .author-input { background: rgba(255,255,255,0.08); border: 1px solid #444; color: #eee; border-radius: 12px; padding: 6px 12px; width: 80px; font-size: 0.9rem; }
-        .control-right { display: flex; align-items: center; gap: 15px; }
+        .control-right { display: flex; align-items: center; gap: 12px; }
         
-        .photo-btn { font-size: 1.4rem; cursor: pointer; opacity: 0.9; display: inline-flex; align-items: center; margin-top: -5px; }
+        .photo-btn { font-size: 1.35rem; cursor: pointer; opacity: 0.9; display: inline-flex; align-items: center; margin-top: -8px; }
         .capsule-label { font-size: 0.85rem; color: #8da399; cursor: pointer; display: flex; align-items: center; gap: 5px; }
         #capsuleTime { background: #fff !important; color: #000 !important; border-radius: 6px; padding: 3px 8px; font-size: 0.8rem; display: none; }
         button#publishBtn { background: var(--autumn-gold); border: none; padding: 10px 22px; border-radius: 25px; cursor: pointer; font-weight: bold; color: #1c2b23; transition: 0.3s; }
 
         #diary-list { width: 100%; max-width: 500px; z-index: 1; padding-bottom: 50px; box-sizing: border-box; }
         .diary-item { 
-            background: var(--card-bg); padding: 12px 18px !important; border-radius: 15px; margin-bottom: 15px; 
+            background: var(--card-bg); padding: 10px 15px !important; border-radius: 12px; margin-bottom: 12px; 
             border: 1px solid var(--card-border); border-left: 5px solid var(--autumn-gold) !important; 
             backdrop-filter: blur(5px); position: relative; width: 100%; box-sizing: border-box; text-align: left !important; 
         }
-        .diary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .diary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
         .diary-text { text-align: left !important; line-height: 1.6; white-space: pre-wrap; font-size: 1rem; word-break: break-word; color: white; margin: 0; padding: 0; }
         
-        /* 原位编辑区 */
         .inline-edit-area {
             width: 100%; background: rgba(255,255,255,0.05); border: 1px solid #555;
             color: white; border-radius: 10px; padding: 10px; font-size: 1rem;
             line-height: 1.6; outline: none; resize: none; margin-bottom: 10px;
             scrollbar-width: none;
         }
-        .inline-edit-actions { display: flex; gap: 10px; justify-content: flex-end; }
-        .btn-mini-save { background: var(--autumn-gold); border: none; padding: 5px 15px; border-radius: 15px; font-size: 0.85rem; cursor: pointer; font-weight: bold; }
-        .btn-mini-cancel { background: rgba(255,255,255,0.1); border: none; color: #ccc; padding: 5px 15px; border-radius: 15px; font-size: 0.85rem; cursor: pointer; }
+        .edit-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 5px; }
+        .btn-mini-save { background: var(--autumn-gold); border: none; padding: 4px 12px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; font-weight: bold; }
+        .btn-mini-cancel { background: rgba(255,255,255,0.1); border: none; color: #ccc; padding: 4px 12px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; }
 
         .diary-image { width: 100%; max-width: 350px; border-radius: 10px; margin-top: 12px; cursor: pointer; display: block; border: 1px solid rgba(255,255,255,0.1); }
 
-        /* 留言回复样式优化 */
+        /* 留言回复样式 */
         .replies-section { margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); }
-        .reply-item { font-size: 0.9rem; color: #8da399; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: flex-start; }
+        .reply-item { font-size: 0.9rem; color: #8da399; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: flex-start; }
         .reply-content { flex: 1; border-left: 2px solid rgba(255,179,71,0.4); padding-left: 10px; line-height: 1.4; }
         .reply-name { color: var(--autumn-gold); font-weight: bold; margin-right: 6px; }
-        /* 🔴 回复时间样式 */
-        .reply-time { font-size: 0.75rem; color: rgba(141, 163, 153, 0.5); margin-left: 8px; font-weight: normal; }
-        .del-reply-btn { background: none; border: none; color: #ff5e5e; cursor: pointer; opacity: 0.4; font-size: 0.85rem; padding: 0 5px; }
+        .reply-time { font-size: 0.75rem; color: rgba(141, 163, 153, 0.4); margin-left: 8px; font-weight: normal; }
+        
+        .reply-actions { display: flex; gap: 5px; margin-left: 10px; align-items: center; }
+        .tiny-btn { background: none; border: none; cursor: pointer; opacity: 0.4; font-size: 0.8rem; padding: 2px; transition: 0.2s; }
+        .tiny-btn:hover { opacity: 1; }
+        .btn-del { color: #ff5e5e; }
+        .btn-edit { color: var(--forest-text); }
+
+        /* 🔴 留言原位编辑框样式 */
+        .reply-edit-box { width: 100%; margin-top: 5px; }
+        .reply-edit-input { width: 100%; background: rgba(255,255,255,0.08); border: 1px solid #444; color: white; border-radius: 8px; padding: 6px 10px; font-size: 0.85rem; outline: none; margin-bottom: 5px; }
 
         .reply-input-box { display: none; margin-top: 12px; gap: 10px; align-items: center; }
         .reply-field { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid #555; color: white; border-radius: 12px; padding: 8px 15px; font-size: 0.9rem; outline: none; }
@@ -175,6 +182,7 @@
         let globalDiaries = [];
         let confirmAction = null;
         let inlineEditingId = null;
+        let replyEditingKey = null; // 格式: "logId-index"
 
         fetchDiaries();
 
@@ -238,27 +246,42 @@
                 }
                 const imgHtml = (!isLocked && item.image_url) ? `<img src="${item.image_url}" class="diary-image" onclick="window.open(this.src)">` : '';
                 
-                // 处理回复内容显示日期
+                // 处理留言回复
                 const replies = item.replies || [];
                 let repliesHtml = '';
                 if (replies.length > 0) {
                     repliesHtml = `<div class="replies-section">` + replies.map((r, index) => {
-                        // 🔴 格式化回复时间为 MM/DD HH:mm
+                        const isReplyEditing = replyEditingKey === `${item.id}-${index}`;
                         const rTime = r.time ? new Date(r.time).toLocaleString([], {month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit'}) : '';
+                        
+                        if (isReplyEditing) {
+                            return `
+                            <div class="reply-edit-box">
+                                <input type="text" id="reply-edit-input-${item.id}-${index}" class="reply-edit-input" value="${r.text}">
+                                <div class="edit-actions">
+                                    <button class="btn-mini-cancel" onclick="cancelReplyEdit()">取消</button>
+                                    <button class="btn-mini-save" onclick="saveReplyEdit('${item.id}', ${index})">保存</button>
+                                </div>
+                            </div>`;
+                        }
+
                         return `
                         <div class="reply-item">
                             <div class="reply-content">
                                 <span class="reply-name">${r.name}:</span>${r.text}
                                 <span class="reply-time">${rTime}</span>
                             </div>
-                            <button class="del-reply-btn" onclick="openConfirmModal('reply', '${item.id}', ${index})">✕</button>
+                            <div class="reply-actions">
+                                <button class="tiny-btn btn-edit" onclick="startReplyEdit('${item.id}', ${index})">✎</button>
+                                <button class="tiny-btn btn-del" onclick="openConfirmModal('reply', '${item.id}', ${index})">✕</button>
+                            </div>
                         </div>`;
                     }).join('') + `</div>`;
                 }
 
                 const contentArea = isEditing ? `
                     <textarea id="inline-editor-${item.id}" class="inline-edit-area" oninput="autoResize(this)">${item.content}</textarea>
-                    <div class="inline-edit-actions">
+                    <div class="edit-actions">
                         <button class="btn-mini-cancel" onclick="cancelInlineEdit()">取消</button>
                         <button class="btn-mini-save" onclick="saveInlineEdit('${item.id}')">保存</button>
                     </div>
@@ -290,6 +313,28 @@
                 const el = document.getElementById(`inline-editor-${inlineEditingId}`);
                 if(el) autoResize(el);
             }
+        }
+
+        // 🟢 留言编辑逻辑
+        function startReplyEdit(logId, index) {
+            replyEditingKey = `${logId}-${index}`;
+            renderDiaries(globalDiaries);
+        }
+
+        function cancelReplyEdit() {
+            replyEditingKey = null;
+            renderDiaries(globalDiaries);
+        }
+
+        async function saveReplyEdit(logId, index) {
+            const newVal = document.getElementById(`reply-edit-input-${logId}-${index}`).value.trim();
+            if(!newVal) return;
+            const item = globalDiaries.find(d => String(d.id) === String(logId));
+            const newReplies = [...item.replies];
+            newReplies[index].text = newVal;
+            await supabaseClient.from('ForestLog').update({ replies: newReplies }).eq('id', logId);
+            replyEditingKey = null;
+            fetchDiaries();
         }
 
         function startInlineEdit(id) {
@@ -347,7 +392,6 @@
             if (!text) return;
             try {
                 const { data: latestItem } = await supabaseClient.from('ForestLog').select('replies').eq('id', id).single();
-                // 🔴 存储回复时带上当前时间戳
                 const newReplies = [...(latestItem.replies || []), { name, text, time: new Date().toISOString() }];
                 await supabaseClient.from('ForestLog').update({ replies: newReplies }).eq('id', id);
                 input.value = ''; toggleReplyBox(id); fetchDiaries();
@@ -367,8 +411,9 @@
                 if (selectedFile) {
                     const fileExt = selectedFile.name.split('.').pop();
                     const fileName = `${Date.now()}.${fileExt}`;
-                    const { data: uploadData } = await supabaseClient.storage.from('forest-images').upload(fileName, selectedFile);
-                    if (uploadData) imageUrl = supabaseClient.storage.from('forest-images').getPublicUrl(fileName).data.publicUrl;
+                    const { data: uploadData, error: uploadError } = await supabaseClient.storage.from('forest-images').upload(fileName, selectedFile);
+                    if (uploadError) throw uploadError;
+                    imageUrl = supabaseClient.storage.from('forest-images').getPublicUrl(fileName).data.publicUrl;
                 }
                 const payload = { content, author, mood: currentMood, is_capsule: isCapsule, image_url: imageUrl };
                 if (isCapsule && unlockAt) payload.unlock_at = new Date(unlockAt).toISOString();
