@@ -99,8 +99,9 @@
         .btn-del { color: #ff5e5e; }
         .btn-edit { color: var(--forest-text); }
 
-        /* 🔴 留言原位编辑框样式 */
-        .reply-edit-box { width: 100%; margin-top: 5px; }
+        /* 🔴 留言双重编辑框样式 */
+        .reply-edit-box { width: 100%; margin-top: 5px; background: rgba(255,255,255,0.03); padding: 8px; border-radius: 10px; }
+        .reply-edit-name { width: 40%; background: transparent; border: none; border-bottom: 1px solid var(--autumn-gold); color: var(--autumn-gold); font-weight: bold; padding: 4px; font-size: 0.85rem; outline: none; margin-bottom: 8px; }
         .reply-edit-input { width: 100%; background: rgba(255,255,255,0.08); border: 1px solid #444; color: white; border-radius: 8px; padding: 6px 10px; font-size: 0.85rem; outline: none; margin-bottom: 5px; }
 
         .reply-input-box { display: none; margin-top: 12px; gap: 10px; align-items: center; }
@@ -182,7 +183,7 @@
         let globalDiaries = [];
         let confirmAction = null;
         let inlineEditingId = null;
-        let replyEditingKey = null; // 格式: "logId-index"
+        let replyEditingKey = null;
 
         fetchDiaries();
 
@@ -246,7 +247,6 @@
                 }
                 const imgHtml = (!isLocked && item.image_url) ? `<img src="${item.image_url}" class="diary-image" onclick="window.open(this.src)">` : '';
                 
-                // 处理留言回复
                 const replies = item.replies || [];
                 let repliesHtml = '';
                 if (replies.length > 0) {
@@ -257,7 +257,8 @@
                         if (isReplyEditing) {
                             return `
                             <div class="reply-edit-box">
-                                <input type="text" id="reply-edit-input-${item.id}-${index}" class="reply-edit-input" value="${r.text}">
+                                <input type="text" id="reply-edit-name-${item.id}-${index}" class="reply-edit-name" value="${r.name}" placeholder="名字">
+                                <input type="text" id="reply-edit-input-${item.id}-${index}" class="reply-edit-input" value="${r.text}" placeholder="留言内容">
                                 <div class="edit-actions">
                                     <button class="btn-mini-cancel" onclick="cancelReplyEdit()">取消</button>
                                     <button class="btn-mini-save" onclick="saveReplyEdit('${item.id}', ${index})">保存</button>
@@ -315,7 +316,22 @@
             }
         }
 
-        // 🟢 留言编辑逻辑
+        // 🟢 留言编辑保存逻辑更新
+        async function saveReplyEdit(logId, index) {
+            const newName = document.getElementById(`reply-edit-name-${logId}-${index}`).value.trim();
+            const newText = document.getElementById(`reply-edit-input-${logId}-${index}`).value.trim();
+            if(!newName || !newText) return;
+            
+            const item = globalDiaries.find(d => String(d.id) === String(logId));
+            const newReplies = [...item.replies];
+            newReplies[index].name = newName;
+            newReplies[index].text = newText;
+            
+            await supabaseClient.from('ForestLog').update({ replies: newReplies }).eq('id', logId);
+            replyEditingKey = null;
+            fetchDiaries();
+        }
+
         function startReplyEdit(logId, index) {
             replyEditingKey = `${logId}-${index}`;
             renderDiaries(globalDiaries);
@@ -324,17 +340,6 @@
         function cancelReplyEdit() {
             replyEditingKey = null;
             renderDiaries(globalDiaries);
-        }
-
-        async function saveReplyEdit(logId, index) {
-            const newVal = document.getElementById(`reply-edit-input-${logId}-${index}`).value.trim();
-            if(!newVal) return;
-            const item = globalDiaries.find(d => String(d.id) === String(logId));
-            const newReplies = [...item.replies];
-            newReplies[index].text = newVal;
-            await supabaseClient.from('ForestLog').update({ replies: newReplies }).eq('id', logId);
-            replyEditingKey = null;
-            fetchDiaries();
         }
 
         function startInlineEdit(id) {
