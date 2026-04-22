@@ -54,10 +54,10 @@
 
         .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; flex-wrap: wrap; gap: 10px; }
         .author-input { background: rgba(255,255,255,0.08); border: 1px solid #444; color: #eee; border-radius: 12px; padding: 6px 12px; width: 80px; font-size: 0.9rem; }
-        .control-right { display: flex; align-items: center; gap: 12px; }
         
-        /* 📷 相机水平对齐修复 */
-        .photo-btn { font-size: 1.35rem; cursor: pointer; opacity: 0.9; display: inline-flex; align-items: center; margin-top: -6px; }
+        /* 📷 相机与胶囊水平对齐修复 */
+        .control-right { display: flex; align-items: center; gap: 12px; }
+        .photo-btn { font-size: 1.35rem; cursor: pointer; opacity: 0.9; display: inline-flex; align-items: center; margin-top: -5px; }
         .capsule-label { font-size: 0.85rem; color: #8da399; cursor: pointer; display: flex; align-items: center; gap: 5px; }
         #capsuleTime { background: #fff !important; color: #000 !important; border-radius: 6px; padding: 3px 8px; font-size: 0.8rem; display: none; }
         button#publishBtn { background: var(--autumn-gold); border: none; padding: 10px 22px; border-radius: 25px; cursor: pointer; font-weight: bold; color: #1c2b23; transition: 0.3s; }
@@ -88,14 +88,23 @@
         .btn-del { color: #ff5e5e; }
         .btn-edit { color: var(--forest-text); }
 
-        /* 留言编辑框样式 */
-        .reply-edit-box { width: 100%; margin-top: 5px; background: rgba(255,255,255,0.03); padding: 8px; border-radius: 10px; }
-        .reply-edit-name { width: 50%; background: transparent; border: none; border-bottom: 1px solid var(--autumn-gold); color: var(--autumn-gold); font-weight: bold; padding: 4px; font-size: 0.85rem; outline: none; margin-bottom: 8px; }
-        .reply-edit-input { width: 100%; background: rgba(255,255,255,0.08); border: 1px solid #444; color: white; border-radius: 8px; padding: 6px 10px; font-size: 0.85rem; outline: none; margin-bottom: 5px; }
+        /* 🔴 留言原位编辑：名字与内容同行 */
+        .reply-edit-box { width: 100%; margin-top: 8px; background: rgba(255,255,255,0.04); padding: 10px; border-radius: 12px; }
+        .reply-edit-row { display: flex; align-items: center; gap: 5px; margin-bottom: 8px; flex-wrap: wrap; }
+        .reply-edit-name { 
+            width: auto; min-width: 60px; max-width: 100px;
+            background: transparent; border: none; border-bottom: 1px dashed var(--autumn-gold); 
+            color: var(--autumn-gold); font-weight: bold; padding: 2px 4px; font-size: 0.9rem; outline: none; 
+        }
+        .reply-edit-input { 
+            flex: 1; min-width: 180px;
+            background: rgba(255,255,255,0.06); border: 1px solid #444; color: white; 
+            border-radius: 8px; padding: 6px 12px; font-size: 0.9rem; outline: none; 
+        }
 
-        .edit-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 5px; }
-        .btn-mini-save { background: var(--autumn-gold); border: none; padding: 4px 12px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; font-weight: bold; }
-        .btn-mini-cancel { background: rgba(255,255,255,0.1); border: none; color: #ccc; padding: 4px 12px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; }
+        .edit-actions { display: flex; gap: 10px; justify-content: flex-end; }
+        .btn-mini-save { background: var(--autumn-gold); border: none; padding: 4px 15px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; font-weight: bold; }
+        .btn-mini-cancel { background: rgba(255,255,255,0.1); border: none; color: #ccc; padding: 4px 15px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; }
 
         .inline-edit-area { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid #555; color: white; border-radius: 10px; padding: 10px; font-size: 1rem; line-height: 1.6; outline: none; resize: none; margin-bottom: 10px; scrollbar-width: none; }
 
@@ -254,8 +263,11 @@
                         if (isReplyEditing) {
                             return `
                             <div class="reply-edit-box">
-                                <input type="text" id="reply-edit-name-${item.id}-${index}" class="reply-edit-name" value="${r.name}" placeholder="名字">
-                                <input type="text" id="reply-edit-input-${item.id}-${index}" class="reply-edit-input" value="${r.text}" placeholder="留言内容">
+                                <div class="reply-edit-row">
+                                    <input type="text" id="reply-edit-name-${item.id}-${index}" class="reply-edit-name" value="${r.name}" placeholder="名字">
+                                    <span style="color:var(--autumn-gold); font-weight:bold;">:</span>
+                                    <input type="text" id="reply-edit-input-${item.id}-${index}" class="reply-edit-input" value="${r.text}" placeholder="留言内容">
+                                </div>
                                 <div class="edit-actions">
                                     <button class="btn-mini-cancel" onclick="cancelReplyEdit()">取消</button>
                                     <button class="btn-mini-save" onclick="saveReplyEdit('${item.id}', ${index})">保存</button>
@@ -313,57 +325,28 @@
             }
         }
 
-        // 🔴 修复姓名修改的核心函数
         async function saveReplyEdit(logId, index) {
             const newName = document.getElementById(`reply-edit-name-${logId}-${index}`).value.trim();
             const newText = document.getElementById(`reply-edit-input-${logId}-${index}`).value.trim();
             if(!newName || !newText) return;
-            
-            // 1. 先从数据库获取最新的 replies 数组，防止本地数据过旧
             const { data: latestItem } = await supabaseClient.from('ForestLog').select('replies').eq('id', logId).single();
             if (!latestItem) return;
-
             let updatedReplies = [...latestItem.replies];
-            // 2. 强制更新对应下标的对象内容
-            updatedReplies[index] = {
-                ...updatedReplies[index],
-                name: newName,
-                text: newText
-            };
-            
-            // 3. 将完整的数组写回数据库
+            updatedReplies[index] = { ...updatedReplies[index], name: newName, text: newText };
             await supabaseClient.from('ForestLog').update({ replies: updatedReplies }).eq('id', logId);
-            
-            replyEditingKey = null;
-            fetchDiaries();
+            replyEditingKey = null; fetchDiaries();
         }
 
-        function startReplyEdit(logId, index) {
-            replyEditingKey = `${logId}-${index}`;
-            renderDiaries(globalDiaries);
-        }
-
-        function cancelReplyEdit() {
-            replyEditingKey = null;
-            renderDiaries(globalDiaries);
-        }
-
-        function startInlineEdit(id) {
-            inlineEditingId = id;
-            renderDiaries(globalDiaries);
-        }
-
-        function cancelInlineEdit() {
-            inlineEditingId = null;
-            renderDiaries(globalDiaries);
-        }
+        function startReplyEdit(logId, index) { replyEditingKey = `${logId}-${index}`; renderDiaries(globalDiaries); }
+        function cancelReplyEdit() { replyEditingKey = null; renderDiaries(globalDiaries); }
+        function startInlineEdit(id) { inlineEditingId = id; renderDiaries(globalDiaries); }
+        function cancelInlineEdit() { inlineEditingId = null; renderDiaries(globalDiaries); }
 
         async function saveInlineEdit(id) {
             const newText = document.getElementById(`inline-editor-${id}`).value.trim();
             if(!newText) return;
             await supabaseClient.from('ForestLog').update({ content: newText }).eq('id', id);
-            inlineEditingId = null;
-            fetchDiaries();
+            inlineEditingId = null; fetchDiaries();
         }
 
         function openConfirmModal(type, id, index = null) {
@@ -384,17 +367,9 @@
             modal.style.display = 'flex'; setTimeout(() => modal.classList.add('show'), 10);
         }
 
-        function closeConfirmModal() {
-            const modal = document.getElementById('customConfirm');
-            modal.classList.remove('show'); setTimeout(() => { modal.style.display = 'none'; confirmAction = null; }, 300);
-        }
-
+        function closeConfirmModal() { const modal = document.getElementById('customConfirm'); modal.classList.remove('show'); setTimeout(() => { modal.style.display = 'none'; confirmAction = null; }, 300); }
         document.getElementById('confirmYesBtn').onclick = () => { if (confirmAction) confirmAction(); };
-
-        function toggleReplyBox(id) {
-            const box = document.getElementById(`reply-box-${id}`);
-            if (box) box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
-        }
+        function toggleReplyBox(id) { const box = document.getElementById(`reply-box-${id}`); if (box) box.style.display = box.style.display === 'flex' ? 'none' : 'flex'; }
 
         async function submitReply(id) {
             const input = document.getElementById(`reply-input-${id}`);
@@ -429,8 +404,7 @@
                 const payload = { content, author, mood: currentMood, is_capsule: isCapsule, image_url: imageUrl };
                 if (isCapsule && unlockAt) payload.unlock_at = new Date(unlockAt).toISOString();
                 await supabaseClient.from('ForestLog').insert([payload]);
-                document.getElementById('diaryInput').value = ''; 
-                document.getElementById('diaryInput').style.height = '80px'; 
+                document.getElementById('diaryInput').value = ''; document.getElementById('diaryInput').style.height = '80px'; 
                 document.getElementById('imagePreview').style.display = 'none';
                 document.getElementById('capsuleCheck').checked = false; document.getElementById('capsuleTime').style.display = 'none';
                 selectedFile = null; fetchDiaries();
@@ -438,10 +412,7 @@
             finally { publishBtn.innerText = '发布日志'; publishBtn.disabled = false; }
         }
 
-        function setMood(mood, btn) {
-            currentMood = mood; document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        }
+        function setMood(mood, btn) { currentMood = mood; document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
 
         function createHeart() {
             const container = document.getElementById('heart-container');
