@@ -50,20 +50,21 @@
         }
         textarea::-webkit-scrollbar { display: none; }
 
-        #imagePreview { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; display: none; margin-bottom: 12px; border: 1px solid var(--autumn-gold); }
-
-        .mood-selector { display: flex; gap: 12px; margin: 10px 0; }
-        .mood-btn { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
-        .mood-btn.active { border-color: white; transform: scale(1.15); box-shadow: 0 0 8px white; }
+        #imagePreview { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; display: none; margin-bottom: 12px; border: 1px solid var(--autumn-gold); }
 
         .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; flex-wrap: wrap; gap: 10px; }
         .author-input { background: rgba(255,255,255,0.08); border: 1px solid #444; color: #eee; border-radius: 12px; padding: 6px 12px; width: 80px; font-size: 0.9rem; }
         .control-right { display: flex; align-items: center; gap: 12px; }
         
-        .photo-btn { font-size: 1.35rem; cursor: pointer; opacity: 0.9; display: inline-flex; align-items: center; margin-top: -8px; }
+        /* 📷 相机水平对齐修复 */
+        .photo-btn { font-size: 1.35rem; cursor: pointer; opacity: 0.9; display: inline-flex; align-items: center; margin-top: -6px; }
         .capsule-label { font-size: 0.85rem; color: #8da399; cursor: pointer; display: flex; align-items: center; gap: 5px; }
         #capsuleTime { background: #fff !important; color: #000 !important; border-radius: 6px; padding: 3px 8px; font-size: 0.8rem; display: none; }
         button#publishBtn { background: var(--autumn-gold); border: none; padding: 10px 22px; border-radius: 25px; cursor: pointer; font-weight: bold; color: #1c2b23; transition: 0.3s; }
+
+        .mood-selector { display: flex; gap: 12px; margin: 10px 0; }
+        .mood-btn { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+        .mood-btn.active { border-color: white; transform: scale(1.15); box-shadow: 0 0 8px white; }
 
         #diary-list { width: 100%; max-width: 500px; z-index: 1; padding-bottom: 50px; box-sizing: border-box; }
         .diary-item { 
@@ -74,18 +75,6 @@
         .diary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
         .diary-text { text-align: left !important; line-height: 1.6; white-space: pre-wrap; font-size: 1rem; word-break: break-word; color: white; margin: 0; padding: 0; }
         
-        .inline-edit-area {
-            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid #555;
-            color: white; border-radius: 10px; padding: 10px; font-size: 1rem;
-            line-height: 1.6; outline: none; resize: none; margin-bottom: 10px;
-            scrollbar-width: none;
-        }
-        .edit-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 5px; }
-        .btn-mini-save { background: var(--autumn-gold); border: none; padding: 4px 12px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; font-weight: bold; }
-        .btn-mini-cancel { background: rgba(255,255,255,0.1); border: none; color: #ccc; padding: 4px 12px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; }
-
-        .diary-image { width: 100%; max-width: 350px; border-radius: 10px; margin-top: 12px; cursor: pointer; display: block; border: 1px solid rgba(255,255,255,0.1); }
-
         /* 留言回复样式 */
         .replies-section { margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); }
         .reply-item { font-size: 0.9rem; color: #8da399; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: flex-start; }
@@ -99,10 +88,18 @@
         .btn-del { color: #ff5e5e; }
         .btn-edit { color: var(--forest-text); }
 
-        /* 🔴 留言双重编辑框样式 */
+        /* 留言编辑框样式 */
         .reply-edit-box { width: 100%; margin-top: 5px; background: rgba(255,255,255,0.03); padding: 8px; border-radius: 10px; }
-        .reply-edit-name { width: 40%; background: transparent; border: none; border-bottom: 1px solid var(--autumn-gold); color: var(--autumn-gold); font-weight: bold; padding: 4px; font-size: 0.85rem; outline: none; margin-bottom: 8px; }
+        .reply-edit-name { width: 50%; background: transparent; border: none; border-bottom: 1px solid var(--autumn-gold); color: var(--autumn-gold); font-weight: bold; padding: 4px; font-size: 0.85rem; outline: none; margin-bottom: 8px; }
         .reply-edit-input { width: 100%; background: rgba(255,255,255,0.08); border: 1px solid #444; color: white; border-radius: 8px; padding: 6px 10px; font-size: 0.85rem; outline: none; margin-bottom: 5px; }
+
+        .edit-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 5px; }
+        .btn-mini-save { background: var(--autumn-gold); border: none; padding: 4px 12px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; font-weight: bold; }
+        .btn-mini-cancel { background: rgba(255,255,255,0.1); border: none; color: #ccc; padding: 4px 12px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; }
+
+        .inline-edit-area { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid #555; color: white; border-radius: 10px; padding: 10px; font-size: 1rem; line-height: 1.6; outline: none; resize: none; margin-bottom: 10px; scrollbar-width: none; }
+
+        .diary-image { width: 100%; max-width: 350px; border-radius: 10px; margin-top: 12px; cursor: pointer; display: block; border: 1px solid rgba(255,255,255,0.1); }
 
         .reply-input-box { display: none; margin-top: 12px; gap: 10px; align-items: center; }
         .reply-field { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid #555; color: white; border-radius: 12px; padding: 8px 15px; font-size: 0.9rem; outline: none; }
@@ -316,18 +313,27 @@
             }
         }
 
-        // 🟢 留言编辑保存逻辑更新
+        // 🔴 修复姓名修改的核心函数
         async function saveReplyEdit(logId, index) {
             const newName = document.getElementById(`reply-edit-name-${logId}-${index}`).value.trim();
             const newText = document.getElementById(`reply-edit-input-${logId}-${index}`).value.trim();
             if(!newName || !newText) return;
             
-            const item = globalDiaries.find(d => String(d.id) === String(logId));
-            const newReplies = [...item.replies];
-            newReplies[index].name = newName;
-            newReplies[index].text = newText;
+            // 1. 先从数据库获取最新的 replies 数组，防止本地数据过旧
+            const { data: latestItem } = await supabaseClient.from('ForestLog').select('replies').eq('id', logId).single();
+            if (!latestItem) return;
+
+            let updatedReplies = [...latestItem.replies];
+            // 2. 强制更新对应下标的对象内容
+            updatedReplies[index] = {
+                ...updatedReplies[index],
+                name: newName,
+                text: newText
+            };
             
-            await supabaseClient.from('ForestLog').update({ replies: newReplies }).eq('id', logId);
+            // 3. 将完整的数组写回数据库
+            await supabaseClient.from('ForestLog').update({ replies: updatedReplies }).eq('id', logId);
+            
             replyEditingKey = null;
             fetchDiaries();
         }
@@ -370,8 +376,8 @@
                 msg.innerText = "确定要删除这条留言吗？";
                 confirmAction = async () => {
                     closeConfirmModal();
-                    const item = globalDiaries.find(d => String(d.id) === String(id));
-                    const newReplies = [...item.replies]; newReplies.splice(index, 1);
+                    const { data: latestItem } = await supabaseClient.from('ForestLog').select('replies').eq('id', id).single();
+                    let newReplies = [...latestItem.replies]; newReplies.splice(index, 1);
                     await supabaseClient.from('ForestLog').update({ replies: newReplies }).eq('id', id); fetchDiaries();
                 };
             }
